@@ -1,0 +1,13 @@
+SELECT COUNT(1) 
+FROM nyc.nyctaxi_fare
+--173,179,759
+
+SELECT TOP (10) *
+FROM nyc.nyctaxi_fare
+
+SELECT hack_license, SUM(total_amount)
+FROM nyc.nyctaxi_fare 
+GROUP BY hack_License
+-- 400 DWU
+-- 04:51 (291 sec)
+-- What if 1200 DWU???

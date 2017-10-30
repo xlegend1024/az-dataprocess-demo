@@ -1,0 +1,11 @@
+DROP EXTERNAL TABLE dbo.Sales_Sensors;
+DROP EXTERNAL TABLE dbo.FactSaleExternal;
+DROP EXTERNAL TABLE dbo.DimCustomerExternal; 
+DROP EXTERNAL TABLE dbo.DimDateExternal;
+DROP EXTERNAL TABLE dbo.BeachSensorsExternal;
+
+DROP EXTERNAL FILE FORMAT TextFile
+
+DROP EXTERNAL DATA SOURCE sqldwDemoBlob
+
+DROP DATABASE SCOPED CREDENTIAL sqldwDemoCred

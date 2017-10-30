@@ -1,0 +1,10 @@
+{
+    "name": "USQLScript",
+    "properties": {
+        "type": "AzureStorage",
+        "description": "",
+        "typeProperties": {
+            "connectionString": "DefaultEndpointsProtocol=https;AccountName=gatesblobdata;AccountKey=hY9rxb65KG0c/zWOV3FO5orjJGqlRq1KhLwGAaym1LbwGZ1TtmB8dbImASxZwpBIutrGGqT/H76pcSBsFZuBLw==;EndpointSuffix=core.windows.net"
+        }
+    }
+}

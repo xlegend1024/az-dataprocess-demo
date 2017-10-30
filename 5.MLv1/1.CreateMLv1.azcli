@@ -1,0 +1,9 @@
+#!/bin/bash
+# Gates Foundation Demo 
+# Create Demo environment
+# for Adanvaced Data Analtyics
+
+rgName=gatesfoundation-demo-rg
+loc=eastus2
+
+

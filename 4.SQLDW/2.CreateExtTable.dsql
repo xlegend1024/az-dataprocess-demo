@@ -1,0 +1,127 @@
+CREATE MASTER KEY;
+
+CREATE DATABASE SCOPED CREDENTIAL sqldwDemoCred
+WITH
+    IDENTITY = 'user',
+    SECRET = '6cDGGy1SIHOdGNm8gtwB0/NB5/QR5gl61bFfsEbJc7N1b6/y2raWGguT9J/cQgfvAxAsnUYkMckEFy7J/ibUcQ=='
+;
+
+CREATE EXTERNAL DATA SOURCE sqldwDemoBlob
+WITH (
+    TYPE = HADOOP,
+    LOCATION = 'wasbs://datawarehouse@gatesdwblob.blob.core.windows.net',
+    CREDENTIAL = sqldwDemoCred
+);
+
+CREATE EXTERNAL FILE FORMAT TextFile
+WITH (
+    FORMAT_TYPE = DelimitedText,
+    FORMAT_OPTIONS (FIELD_TERMINATOR = ',')
+);
+
+CREATE EXTERNAL TABLE dbo.FactSaleExternal (
+SaleKey BIGINT NOT NULL,
+    CityKey INT NOT NULL,
+    CustomerKey INT NOT NULL,
+    BillToCustomerKey INT NOT NULL,
+    StockItemKey INT NOT NULL,
+    InvoiceDateKey DATE NOT NULL,
+    DeliveryDateKey DATE NULL,
+    SalespersonKey INT NOT NULL,
+    WWIInvoiceID INT NOT NULL,	
+    Package NVARCHAR(50) NULL,
+    Quantity INT NULL,	
+    UnitPrice DECIMAL(18,2) NULL,
+    TaxRate DECIMAL(18,3) NULL,
+    TotalExcludingTax DECIMAL(18,2) NULL,	
+    TaxAmount DECIMAL(18,2) NULL,
+    Profit DECIMAL(18,2) NULL,
+    TotalIncludingTax DECIMAL(18,2) NULL,
+    TotalDryItems INT NULL,	
+    TotalChillerItems INT NULL,	
+    LineageKey INT NULL
+)
+WITH (
+    LOCATION='/Sale.csv',
+    DATA_SOURCE=sqldwDemoBlob,
+    FILE_FORMAT=TextFile
+);
+
+
+CREATE EXTERNAL TABLE dbo.DimCustomerExternal (
+	CustomerKey INT NOT NULL,
+	WWICustomerID INT NOT NULL,
+	Customer NVARCHAR(100) NOT NULL,
+	BillToCustomer NVARCHAR(100) NOT NULL,
+	Category NVARCHAR(50) NOT NULL,
+	BuyingGroup NVARCHAR(50) NOT NULL,
+	PrimaryContact NVARCHAR(50) NOT NULL,
+	PostalCode NVARCHAR(10) NOT NULL,
+	LineageKey INT NOT NULL
+)
+WITH (
+    LOCATION='/Customer.csv',
+    DATA_SOURCE=sqldwDemoBlob,
+    FILE_FORMAT=TextFile
+);
+
+
+CREATE EXTERNAL TABLE dbo.DimDateExternal (
+	Date DATE NOT NULL,
+	DayNumber INT NOT NULL,
+	Day NVARCHAR(10) NOT NULL,
+	Month NVARCHAR(10) NOT NULL,
+	ShortMonth NVARCHAR(3) NOT NULL,
+	CalendarMonthNumber INT NOT NULL,
+	CalendarMonthLabel NVARCHAR(20) NOT NULL,
+	CalendarYear INT NOT NULL,
+	CalendarYearLabel NVARCHAR(10) NOT NULL,
+	FiscalMonthNumber INT NOT NULL,
+	FiscalMonthLabel NVARCHAR(20) NOT NULL,
+	FiscalYear INT NOT NULL,
+	FiscalYearLabel NVARCHAR(10) NOT NULL,
+	ISOWeekNumber INT NOT NULL
+)
+WITH (
+    LOCATION='/Date.csv',
+    DATA_SOURCE=sqldwDemoBlob,
+    FILE_FORMAT=TextFile
+);
+
+
+CREATE EXTERNAL TABLE dbo.BeachSensorsExternal (
+	StationName VARCHAR(50) NOT NULL,
+	MeasurementTimestamp VARCHAR(50) NOT NULL,
+	AirTemperature DECIMAL(9,2) NULL,
+	WetBulbTemperature DECIMAL(9,2) NULL,
+	Humidity DECIMAL(9,2) NULL,
+	RainIntensity DECIMAL(9,2) NULL,
+	IntervalRain DECIMAL(9,2) NULL,
+	TotalRain DECIMAL(9,2) NULL,
+	PrecipitationType DECIMAL(9,2) NULL,
+	WindDirection DECIMAL(9,2) NULL,
+	WindSpeed DECIMAL(9,2) NULL,
+	MaximumWindSpeed DECIMAL(9,2) NULL,
+	BarometricPressure DECIMAL(9,2) NULL,
+	SolarRadiation DECIMAL(9,2) NULL,
+	Heading DECIMAL(9,2) NULL,
+	BatteryLife DECIMAL(9,2) NULL,
+	MeasurementTimestampLabel VARCHAR(50) NOT NULL,
+	MeasurementID VARCHAR(100) NOT NULL
+)
+WITH (
+    LOCATION='/BeachWeatherStationsAutomatedSensors.csv',
+    DATA_SOURCE=sqldwDemoBlob,
+    FILE_FORMAT=TextFile
+);
+SELECT TOP 10 * FROM dbo.FactSaleExternal;
+
+SELECT TOP 10 * FROM dbo.DimCustomerExternal; 
+
+SELECT TOP 10 * FROM dbo.DimDateExternal;
+
+SELECT TOP 10 * FROM dbo.BeachSensorsExternal;
+
+
+
+

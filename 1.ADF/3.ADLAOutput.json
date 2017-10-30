@@ -1,0 +1,21 @@
+{
+    "name": "ADLAOutput",
+    "properties": {
+        "published": false,
+        "type": "AzureDataLakeStore",
+        "linkedServiceName": "Destination-WWIDataLake",
+        "typeProperties": {
+            "fileName": "transactionDetail.txt",
+            "folderPath": "//data//output",
+            "format": {
+                "type": "TextFormat",
+                "rowDelimiter": "\n",
+                "columnDelimiter": "|"
+            }
+        },
+        "availability": {
+            "frequency": "Day",
+            "interval": 1
+        }
+    }
+}

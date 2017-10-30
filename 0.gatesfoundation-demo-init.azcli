@@ -1,0 +1,16 @@
+# Data Process Demo 
+# This script will create demo environment
+# for Adanvaced Data Analtyics
+
+# Set Resource Group Name
+rgName=
+# Set Region
+loc=
+
+# Tags
+myTags="Env=Demo Account=GatesFoundation"
+echo $rgName, $myTags
+# Create Resource Group
+az group create --name $rgName --location $loc --tags $myTags
+
+

@@ -1,0 +1,16 @@
+DROP DATABASE IF EXISTS DB_Transactions;
+CREATE DATABASE DB_Transactions;
+
+USE DATABASE DB_Transactions;
+
+DROP TABLE IF EXISTS TransactionDetil;
+
+CREATE TABLE TransactionDetail
+(
+	INDEX idx1 CLUSTERED (Date ASC)
+	DISTRIBUTED BY HASH (Customer)
+	
+) AS
+SELECT *
+FROM master.dbo.WideWorldTransactions() AS Detail;
+	

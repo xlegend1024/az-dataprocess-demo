@@ -1,0 +1,34 @@
+--Refer following link 
+--https://docs.microsoft.com/en-us/azure/machine-learning/team-data-science-process/sqldw-walkthrough
+CREATE SCHEMA nyc;
+
+BEGIN TRY
+       --Try to create the master key
+    CREATE MASTER KEY
+END TRY
+BEGIN CATCH
+       --If the master key exists, do nothing
+END CATCH;
+
+CREATE DATABASE SCOPED
+CREDENTIAL blob_Cred
+WITH IDENTITY = 'gatesdwblob' ,
+  Secret = 'tvZ3VhEHI0vdJ7MmmTtvVxkOqH4t8XHFN2XSL6ia1X2QWLdTE2PoOVcZ1jc3zsMPUpsKMrfq5vUunkSLIV79Rg==';
+
+CREATE EXTERNAL DATA SOURCE nyctaxi_trip_storage
+WITH
+(
+    TYPE = HADOOP,
+    LOCATION ='wasbs://newyorktaxi@gatesdwblob.blob.core.windows.net',
+    CREDENTIAL = blob_Cred
+)
+;
+
+CREATE EXTERNAL DATA SOURCE nyctaxi_fare_storage
+WITH
+(
+    TYPE = HADOOP,
+    LOCATION ='wasbs://newyorktaxi@gatesdwblob.blob.core.windows.net',
+    CREDENTIAL = blob_Cred
+)
+;

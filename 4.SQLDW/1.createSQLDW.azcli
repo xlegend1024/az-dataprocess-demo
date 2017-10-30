@@ -1,0 +1,33 @@
+# Gates Foundation Demo 
+# Create Demo environment
+# for Adanvaced Data Analtyics
+
+rgName=gatesfoundation-demo-rg
+loc=eastus2
+
+sqlsvrName=gatessqlsvr
+sqldwName=gatesdw
+sqladm=sqladmin
+sqlpwd=1q2w3e4r5t6Y
+sqldwblob=gatesdwblob
+
+#az sql server create --admin-user $sqladm --admin-password $sqlpwd --location $loc --name $sqlsvrName --resource-group $rgName --tags Env=Demo Account=GatesFoundation
+az sql dw create --name $sqldwName --resource-group $rgName --server $sqlsvrName --tags Env=Demo Account=GatesFoundation
+az storage account create --name $sqldwblob --resource-group $rgName --sku Standard_LRS --location $loc --tags Env=Demo Account=GatesFoundation
+blobConn=$(az storage account show-connection-string --name $sqldwblob --resource-group $rgName --output tsv)
+echo $blobConn
+
+# Upload Samples to Blob
+containerName=datawarehouse
+f1=./SampleData/BeachWeatherStationsAutomatedSensors.csv
+f2=./SampleData/Customer.csv
+f3=./SampleData/Date.csv
+f4=./SampleData/Sale.csv
+
+az storage blob upload --container-name $containerName --file $f1 --name BeachWeatherStationsAutomatedSensors.csv --connection-string $blobConn
+az storage blob upload --container-name $containerName --file $f2 --name Customer.csv --connection-string $blobConn
+az storage blob upload --container-name $containerName --file $f3 --name Date.csv --connection-string $blobConn
+az storage blob upload --container-name $containerName --file $f4 --name ale.csv --connection-string $blobConn
+
+
+

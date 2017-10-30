@@ -1,0 +1,81 @@
+CREATE EXTERNAL FILE FORMAT csv_file_format
+WITH
+(   
+    FORMAT_TYPE = DELIMITEDTEXT,
+    FORMAT_OPTIONS  
+    (
+        FIELD_TERMINATOR =',',
+        USE_TYPE_DEFAULT = TRUE
+    )
+)
+;
+
+CREATE EXTERNAL TABLE external_nyctaxi_fare
+(
+    medallion varchar(50) not null,
+    hack_license varchar(50) not null,
+    vendor_id char(3),
+    pickup_datetime datetime not null,
+    payment_type char(3),
+    fare_amount float,
+    surcharge float,
+    mta_tax float,
+    tip_amount float,
+    tolls_amount float,
+    total_amount float
+)
+with (
+    LOCATION    = '/trip_fare/',
+    DATA_SOURCE = nyctaxi_fare_storage,
+    FILE_FORMAT = csv_file_format,
+    REJECT_TYPE = VALUE,
+    REJECT_VALUE = 12     
+)  ;
+
+CREATE EXTERNAL TABLE external_nyctaxi_trip
+(
+        medallion varchar(50) not null,
+        hack_license varchar(50)  not null,
+        vendor_id char(3),
+        rate_code char(3),
+        store_and_fwd_flag char(3),
+        pickup_datetime datetime  not null,
+        dropoff_datetime datetime,
+        passenger_count int,
+        trip_time_in_secs bigint,
+        trip_distance float,
+        pickup_longitude varchar(30),
+        pickup_latitude varchar(30),
+        dropoff_longitude varchar(30),
+        dropoff_latitude varchar(30)
+)
+with (
+    LOCATION    = '/trip_data/',
+    DATA_SOURCE = nyctaxi_trip_storage,
+    FILE_FORMAT = csv_file_format,
+    REJECT_TYPE = VALUE,
+    REJECT_VALUE = 12         
+);
+
+CREATE TABLE nyc.nyctaxi_fare
+WITH
+(   
+    CLUSTERED COLUMNSTORE INDEX,
+    DISTRIBUTION = HASH(medallion)
+)
+AS
+SELECT *
+FROM   external_nyctaxi_fare
+;
+
+CREATE TABLE nyc.nyctaxi_trip
+WITH
+(   
+    CLUSTERED COLUMNSTORE INDEX,
+    DISTRIBUTION = HASH(medallion)
+)
+AS
+SELECT *
+FROM   external_nyctaxi_trip
+;
+

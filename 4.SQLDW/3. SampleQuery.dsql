@@ -1,0 +1,28 @@
+CREATE TABLE dbo.Sales_Sensors
+WITH
+(
+    CLUSTERED COLUMNSTORE INDEX,
+    DISTRIBUTION = ROUND_ROBIN
+)
+AS
+SELECT  dc.Customer,
+        dd.Date,
+        SUM(fs.Quantity) AS TotalQuantity,
+        AVG(fs.UnitPrice) AS AvgUnitPrice,
+        SUM(fs.Profit) AS TotalProfit,
+        SUM(fs.TotalDryItems) AS TotalDryItems,
+        SUM(fs.TotalChillerItems) AS TotalChillerItems,
+        AVG(bs.AirTemperature) AS AvgTemperature,
+        AVG(bs.Humidity) AS AvgHumidity
+FROM    dbo.FactSaleExternal AS fs
+JOIN    dbo.DimCustomerExternal AS dc
+ON      fs.CustomerKey = dc.CustomerKey
+JOIN    dbo.DimDateExternal AS dd
+ON      fs.DeliveryDateKey = dd.Date
+JOIN    dbo.BeachSensorsExternal AS bs
+ON      fs.DeliveryDateKey = CAST(bs.MeasurementTimeStamp AS DATE)
+GROUP BY    dc.Customer, dd.Date;
+
+SELECT TOP 100 *
+FROM dbo.Sales_Sensors;
+

@@ -1,0 +1,94 @@
+﻿@factsale =
+    EXTRACT [SaleKey] int,
+    [CityKey] int,
+    [CustomerKey] int,
+    [BillToCustomer Key] int,
+    [StockItemKey]	 int,
+    [InvoiceDateKey]	 DateTime,
+    [DeliveryDateKey]	 DateTime?,
+    [SalespersonKey]	 int,
+    [WWIInvoiceID]	 int,	
+    [Description]	 string,
+    [Package]	 string,
+    [Quantity]	 int,	
+    [UnitPrice]	 decimal,
+    [TaxRate]	 decimal,
+    [TotalExcludingTax]	 decimal,	
+    [TaxAmount]	 decimal,
+    [Profit]	 decimal,
+    [TotalIncludingTax]	 decimal,
+    [TotalDryItems]	 int,	
+    [TotalChillerItems]	 int,	
+    [LineageKey]	 int
+    FROM "/data/WWIdw/%5BFact%5D.%5BSale%5D.txt"
+    USING Extractors.Text(delimiter:'|',quoting: true,nullEscape:"\\N");
+
+
+@dimdate = 
+    EXTRACT [Date]	DateTime,
+	[DayNumber]	int,
+    [Day]	int,
+    [Month]	string,
+    [ShortMonth]	string,
+    [CalendarMonthNumber]	int,
+    [CalendarMonthLabel]	string,
+    [CalendarYear]	int,
+    [CalendarYearLabel]	string,
+    [FiscalMonthNumber]	int,
+    [FiscalMonthLabel]	string,
+    [FiscalYear]	string,
+    [FiscalYear Label]	string,
+    [ISOWeekNumber]	int
+    FROM "/data/WWIdw/%5BDimension%5D.%5BDate%5D.txt"
+    USING Extractors.Text(delimiter: '|', quoting: true);
+
+
+
+@dimcustomer = 
+    EXTRACT [CustomerKey]	int,
+    [WWICustomerID]	int,
+    [Customer]	string,
+    [BillToCustomer]	string,
+    [Category]	string,
+    [BuyingGroup]	string,
+    [PrimaryContact]	string,
+    [PostalCode]	string,
+    [ValidFrom]	DateTime,
+    [ValidTo]	DateTime,
+    [LineageKey]	int
+    FROM "/data/WWIdw/%5BDimension%5D.%5BCustomer%5D.txt"
+    USING Extractors.Text(delimiter: '|', quoting: true, nullEscape:"\\N");
+
+
+@transDetail = 
+    SELECT  
+       s.[Description]
+      ,s.[Package]
+      ,s.[Quantity]
+      ,s.[UnitPrice]
+      ,s.[TaxRate]
+      ,s.[TotalExcludingTax]
+      ,s.[TaxAmount]
+      ,s.[Profit]
+      ,s.[TotalIncludingTax]
+      ,s.[TotalDryItems]
+      ,s.[TotalChillerItems]
+      ,s.[LineageKey]
+      ,c.[Customer]
+      ,c.[BillToCustomer]
+      ,c.[Category]
+      ,c.[BuyingGroup]
+      ,c.[PrimaryContact]
+      ,c.[PostalCode]
+	  ,d.[Date]
+      ,d.[Day]
+      ,d.[CalendarMonthLabel]
+      ,d.[CalendarYear]
+  FROM @factsale AS s
+  JOIN @dimcustomer AS c ON s.[CustomerKey] == c.[CustomerKey]
+  JOIN @dimdate AS d ON s.[InvoiceDateKey] == d.[Date];
+
+OUTPUT @transDetail 
+    TO "/data/output/transactionDetail.txt"
+USING Outputters.Csv();
+

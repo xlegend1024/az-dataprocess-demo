@@ -1,0 +1,27 @@
+@taxifare =
+    EXTRACT     
+        medallion string,
+        hack_license string,
+        vendor_id string,
+        pickup_datetime DateTime,
+        payment_type string,
+        fare_amount float,
+        surcharge float,
+        mta_tax float,
+        tip_amount float,
+        tolls_amount float,
+        total_amount float
+    FROM "/newyorktaxi/trip_fare/{*}.csv"
+    USING Extractors.Csv(skipFirstNRows:1);
+
+@result =
+    SELECT 
+        hack_license,
+        SUM(total_amount) AS sum_total_amount
+    FROM @taxifare
+    GROUP BY hack_license;
+
+OUTPUT @result 
+TO "/newyorktaxi/total_amount.csv"
+USING Outputters.Csv();
+
