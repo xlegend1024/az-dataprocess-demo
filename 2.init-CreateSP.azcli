@@ -2,6 +2,7 @@ subId=$(az account list --query [].[id] --output tsv)
 tenantId=$(az account list --query [].[tenantId] --output tsv)
 rgName=bigdata-demo-rg
 adlsName=bigdataprocadls
+mypassword=TlqkfWhrxrkxdmsgkfnekTlqkf
 
 read sp_id sp_password <<< $(az ad sp create-for-rbac -n "azuredemo_DELETE_ME" --role contributor --scopes /subscriptions/$subId/resourceGroups/$rgName --query [appId,password] -o tsv)
 
@@ -22,4 +23,22 @@ adlslinkedsvr='
 }
 '
 
+echo $adlslinkedsvr > ./1.ADF/ADFJson/Destination-WWIDataLake.json
+
+
+azADLAlink='
+{
+    "name": "AzureDataLakeAnalyticsLinkedService",
+    "properties": {
+        "type": "AzureDataLakeAnalytics",
+        "description": "",
+        "typeProperties": {
+            "authorization": "",
+            "accountName": "'$adlaName'",
+            "subscriptionId": "'$subId'",
+            "resourceGroupName": "$rgName''",
+            "sessionId": ""
+        }
+    }
+}'
 echo $adlslinkedsvr > ./1.ADF/ADFJson/AzureDataLakeAnalyticsLinkedService.json
