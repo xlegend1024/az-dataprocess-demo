@@ -1,0 +1,80 @@
+{
+    "name": "OutputDatasets-dim-date",
+    "properties": {
+        "structure": [
+            {
+                "name": "Date",
+                "type": "Datetime"
+            },
+            {
+                "name": "Day Number",
+                "type": "Int32"
+            },
+            {
+                "name": "Day",
+                "type": "String"
+            },
+            {
+                "name": "Month",
+                "type": "String"
+            },
+            {
+                "name": "Short Month",
+                "type": "String"
+            },
+            {
+                "name": "Calendar Month Number",
+                "type": "Int32"
+            },
+            {
+                "name": "Calendar Month Label",
+                "type": "String"
+            },
+            {
+                "name": "Calendar Year",
+                "type": "Int32"
+            },
+            {
+                "name": "Calendar Year Label",
+                "type": "String"
+            },
+            {
+                "name": "Fiscal Month Number",
+                "type": "Int32"
+            },
+            {
+                "name": "Fiscal Month Label",
+                "type": "String"
+            },
+            {
+                "name": "Fiscal Year",
+                "type": "Int32"
+            },
+            {
+                "name": "Fiscal Year Label",
+                "type": "String"
+            },
+            {
+                "name": "ISO Week Number",
+                "type": "Int32"
+            }
+        ],
+        "published": false,
+        "type": "AzureDataLakeStore",
+        "linkedServiceName": "Destination-WWIDataLake",
+        "typeProperties": {
+            "fileName": "[Dimension].[Date].txt",
+            "folderPath": "\\data\\WWIdw",
+            "format": {
+                "type": "TextFormat",
+                "columnDelimiter": "|",
+                "quoteChar": "\""
+            }
+        },
+        "availability": {
+            "frequency": "Day",
+            "interval": 1
+        },
+        "policy": {}
+    }
+}

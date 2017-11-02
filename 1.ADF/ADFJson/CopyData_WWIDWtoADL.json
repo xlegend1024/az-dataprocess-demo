@@ -1,0 +1,163 @@
+{
+    "name": "CopyData_WWIDWtoADL",
+    "properties": {
+        "activities": [
+            {
+                "type": "Copy",
+                "typeProperties": {
+                    "source": {
+                        "type": "SqlSource",
+                        "sqlReaderQuery": "select * from [Dimension].[Customer]"
+                    },
+                    "sink": {
+                        "type": "AzureDataLakeStoreSink",
+                        "writeBatchSize": 0,
+                        "writeBatchTimeout": "00:00:00"
+                    }
+                },
+                "inputs": [
+                    {
+                        "name": "InputDatasets-dim-customer"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "OutputDatasets-dim-customer"
+                    }
+                ],
+                "policy": {
+                    "timeout": "1.00:00:00",
+                    "concurrency": 1,
+                    "executionPriorityOrder": "NewestFirst",
+                    "style": "StartOfInterval",
+                    "retry": 3,
+                    "longRetry": 0,
+                    "longRetryInterval": "00:00:00"
+                },
+                "scheduler": {
+                    "frequency": "Day",
+                    "interval": 1
+                },
+                "name": "Export_SQLDB_to_ADLS_Dimension_Customer"
+            },
+            {
+                "type": "Copy",
+                "typeProperties": {
+                    "source": {
+                        "type": "SqlSource",
+                        "sqlReaderQuery": "select * from [Dimension].[Date]"
+                    },
+                    "sink": {
+                        "type": "AzureDataLakeStoreSink",
+                        "writeBatchSize": 0,
+                        "writeBatchTimeout": "00:00:00"
+                    }
+                },
+                "inputs": [
+                    {
+                        "name": "InputDatasets-dim-date"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "OutputDatasets-dim-date"
+                    }
+                ],
+                "policy": {
+                    "timeout": "1.00:00:00",
+                    "concurrency": 1,
+                    "executionPriorityOrder": "NewestFirst",
+                    "style": "StartOfInterval",
+                    "retry": 3,
+                    "longRetry": 0,
+                    "longRetryInterval": "00:00:00"
+                },
+                "scheduler": {
+                    "frequency": "Day",
+                    "interval": 1
+                },
+                "name": "Export_SQLDB_to_ADLS_Dimension_Date"
+            },
+            {
+                "type": "Copy",
+                "typeProperties": {
+                    "source": {
+                        "type": "SqlSource",
+                        "sqlReaderQuery": "select * from [Fact].[Sale]"
+                    },
+                    "sink": {
+                        "type": "AzureDataLakeStoreSink",
+                        "writeBatchSize": 0,
+                        "writeBatchTimeout": "00:00:00"
+                    }
+                },
+                "inputs": [
+                    {
+                        "name": "InputDatasets-fact-sale"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "OutputDatasets-fact-sale"
+                    }
+                ],
+                "policy": {
+                    "timeout": "1.00:00:00",
+                    "concurrency": 1,
+                    "executionPriorityOrder": "NewestFirst",
+                    "style": "StartOfInterval",
+                    "retry": 3,
+                    "longRetry": 0,
+                    "longRetryInterval": "00:00:00"
+                },
+                "scheduler": {
+                    "frequency": "Day",
+                    "interval": 1
+                },
+                "name": "Export_SQLDB_to_ADLS_Fact_Sale"
+            },
+            {
+                "type": "DataLakeAnalyticsU-SQL",
+                "typeProperties": {
+                    "scriptPath": "scripts\\ProcessData.usql",
+                    "scriptLinkedService": "USQLScript",
+                    "degreeOfParallelism": 5,
+                    "priority": 1000,
+                    "parameters": {}
+                },
+                "inputs": [
+                    {
+                        "name": "OutputDatasets-dim-customer"
+                    },
+                    {
+                        "name": "OutputDatasets-dim-date"
+                    },
+                    {
+                        "name": "OutputDatasets-fact-sale"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "ADLAOutput"
+                    }
+                ],
+                "policy": {
+                    "timeout": "01:00:00",
+                    "concurrency": 1,
+                    "retry": 3
+                },
+                "scheduler": {
+                    "frequency": "Day",
+                    "interval": 1
+                },
+                "name": "ProcessTransactions",
+                "linkedServiceName": "AzureDataLakeAnalyticsLinkedService"
+            }
+        ],
+        "start": "2017-10-31T20:30:36.467Z",
+        "end": "2099-12-31T08:00:00Z",
+        "isPaused": false,
+        "hubName": "bigdatademoadf_hub",
+        "pipelineMode": "Scheduled"
+    }
+}

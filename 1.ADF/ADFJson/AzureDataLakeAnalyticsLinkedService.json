@@ -1,0 +1,13 @@
+{
+    "name": "AzureDataLakeAnalyticsLinkedService",
+    "properties": {
+        "type": "AzureDataLakeAnalytics",
+        "description": "",
+        "typeProperties": {            "dataLakeStoreUri": "https://bigdataprocadls.azuredatalakestore.net/webhdfs/v1",
+            "servicePrincipalId": "47ce7ffe-60e5-4bee-8666-99bd521a7c76",
+            "servicePrincipalKey": "a9941042-73b3-43c7-9599-56c5918f0d59",
+            "tenant": "72ab6a71-29b5-4309-b4e7-66a2f7d88b14",
+            "subscriptionId": "d609b87a-9655-4a94-ba5a-00703a1679e6",
+            "resourceGroupName": "bigdata-demo-rg"}
+    }
+}

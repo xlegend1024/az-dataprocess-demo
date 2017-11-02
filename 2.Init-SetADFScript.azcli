@@ -24,3 +24,18 @@ az storage blob upload --container-name $containerName --file $file_to_upload --
 
 # Listing the blobs
 az storage blob list --container-name $containerName --connection-string $blobConn --output table
+
+azStorageLinkedSvr='{
+    "name": "USQLScript",
+    "properties": {
+        "description": "",
+        "hubName": "bigdatademoadf_hub",
+        "type": "AzureStorage",
+        "typeProperties": {
+            "connectionString": "'$blobConn'"
+        }
+    }
+}
+' 
+
+echo $azStorageLinkedSvr > ./1.ADF/AzureStorageLinkedService.json

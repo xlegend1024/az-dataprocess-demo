@@ -1,0 +1,10 @@
+{
+    "name": "Source-WWIDW",
+    "properties": {
+        "hubName": "bigdatademoadf_hub",
+        "type": "AzureSqlDatabase",
+        "typeProperties": {
+            "connectionString": "Data Source=wwimsvr.database.windows.net;Initial Catalog=wwimdb;Integrated Security=False;User ID=sqladmin;Password=1q2w3e4r5t6Y;Connect Timeout=30;Encrypt=True"
+        }
+    }
+}

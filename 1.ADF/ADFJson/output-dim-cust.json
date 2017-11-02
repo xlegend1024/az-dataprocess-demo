@@ -1,0 +1,68 @@
+{
+    "name": "OutputDatasets-dim-customer",
+    "properties": {
+        "structure": [
+            {
+                "name": "Customer Key",
+                "type": "Int32"
+            },
+            {
+                "name": "WWI Customer ID",
+                "type": "Int32"
+            },
+            {
+                "name": "Customer",
+                "type": "String"
+            },
+            {
+                "name": "Bill To Customer",
+                "type": "String"
+            },
+            {
+                "name": "Category",
+                "type": "String"
+            },
+            {
+                "name": "Buying Group",
+                "type": "String"
+            },
+            {
+                "name": "Primary Contact",
+                "type": "String"
+            },
+            {
+                "name": "Postal Code",
+                "type": "String"
+            },
+            {
+                "name": "Valid From",
+                "type": "Datetime"
+            },
+            {
+                "name": "Valid To",
+                "type": "Datetime"
+            },
+            {
+                "name": "Lineage Key",
+                "type": "Int32"
+            }
+        ],
+        "published": false,
+        "type": "AzureDataLakeStore",
+        "linkedServiceName": "Destination-WWIDataLake",
+        "typeProperties": {
+            "fileName": "[Dimension].[Customer].txt",
+            "folderPath": "\\data\\WWIdw",
+            "format": {
+                "type": "TextFormat",
+                "columnDelimiter": "|",
+                "quoteChar": "\""
+            }
+        },
+        "availability": {
+            "frequency": "Day",
+            "interval": 1
+        },
+        "policy": {}
+    }
+}

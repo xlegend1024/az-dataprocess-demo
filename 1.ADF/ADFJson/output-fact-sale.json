@@ -1,0 +1,108 @@
+{
+    "name": "OutputDatasets-fact-sale",
+    "properties": {
+        "structure": [
+            {
+                "name": "Sale Key",
+                "type": "Int64"
+            },
+            {
+                "name": "City Key",
+                "type": "Int32"
+            },
+            {
+                "name": "Customer Key",
+                "type": "Int32"
+            },
+            {
+                "name": "Bill To Customer Key",
+                "type": "Int32"
+            },
+            {
+                "name": "Stock Item Key",
+                "type": "Int32"
+            },
+            {
+                "name": "Invoice Date Key",
+                "type": "Datetime"
+            },
+            {
+                "name": "Delivery Date Key",
+                "type": "Datetime"
+            },
+            {
+                "name": "Salesperson Key",
+                "type": "Int32"
+            },
+            {
+                "name": "WWI Invoice ID",
+                "type": "Int32"
+            },
+            {
+                "name": "Description",
+                "type": "String"
+            },
+            {
+                "name": "Package",
+                "type": "String"
+            },
+            {
+                "name": "Quantity",
+                "type": "Int32"
+            },
+            {
+                "name": "Unit Price",
+                "type": "Decimal"
+            },
+            {
+                "name": "Tax Rate",
+                "type": "Decimal"
+            },
+            {
+                "name": "Total Excluding Tax",
+                "type": "Decimal"
+            },
+            {
+                "name": "Tax Amount",
+                "type": "Decimal"
+            },
+            {
+                "name": "Profit",
+                "type": "Decimal"
+            },
+            {
+                "name": "Total Including Tax",
+                "type": "Decimal"
+            },
+            {
+                "name": "Total Dry Items",
+                "type": "Int32"
+            },
+            {
+                "name": "Total Chiller Items",
+                "type": "Int32"
+            },
+            {
+                "name": "Lineage Key",
+                "type": "Int32"
+            }
+        ],
+        "published": false,
+        "type": "AzureDataLakeStore",
+        "linkedServiceName": "Destination-WWIDataLake",
+        "typeProperties": {
+            "fileName": "[Fact].[Sale].txt",
+            "folderPath": "\\data\\WWIdw",
+            "format": {
+                "type": "TextFormat",
+                "columnDelimiter": "|",
+                "quoteChar": "\""
+            }
+        },
+        "availability": {
+            "frequency": "Day",
+            "interval": 1
+        },
+        "policy": {}
+    }
+}
