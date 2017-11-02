@@ -41,4 +41,4 @@ azADLAlink='
         }
     }
 }'
-echo $adlslinkedsvr > ./1.ADF/ADFJson/AzureDataLakeAnalyticsLinkedService.json
+echo $azADLAlink > ./1.ADF/ADFJson/AzureDataLakeAnalyticsLinkedService.json
