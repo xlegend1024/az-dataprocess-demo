@@ -1,0 +1,127 @@
+#!/bin/bash
+rgName=bigdata-demo-rg
+loc=eastus2
+blobName=bigdatademoblob
+containerName=sampledata
+sqlsvrName=wwimsvr
+sqldbName=wwimdb
+sqladm=sqladmin
+sqlpwd=1q2w3e4r5t6Y
+adlsName=bigdataprocadls
+adlaName=bigdataprocadla
+containerName2=scripts
+myTags="Env=demo"
+echo $rgName, $myTags
+
+echo "Creating the Resource Group"
+az group create --name $rgName --location $loc --tags $myTags
+
+echo "Creating the Storage Account..."
+az storage account create --name $blobName --resource-group $rgName --sku Standard_LRS --location $loc --tags $myTags
+
+blobConn=$(az storage account show-connection-string --name $blobName --resource-group $rgName --output tsv)
+echo $blobConn
+
+echo "Creating the container..."
+az storage container create --name $containerName --connection-string $blobConn
+
+echo "Download Sample DB"
+file_to_upload="./WideWorldImportersDW-Standard.bacpac"
+objName=WideWorldImportersDW-Standard.bacpac
+wget -O $file_to_upload https://github.com/Microsoft/sql-server-samples/releases/download/wide-world-importers-v1.0/WideWorldImportersDW-Standard.bacpac
+
+echo "Uploading a SQLDB Backup file..."
+az storage blob upload --container-name $containerName --file $file_to_upload --name $objName --connection-string $blobConn
+
+echo "Listing the blobs..."
+az storage blob list --container-name $containerName --connection-string $blobConn --output table
+
+echo "Creating the SQL Server"
+az sql server create --admin-user $sqladm --admin-password $sqlpwd --location $loc --name $sqlsvrName --resource-group $rgName #--tags $myTags
+echo "Update Firewall rules"
+az sql server firewall-rule create -n openall --start-ip-address 1.1.1.1 --end-ip-addres 255.1.1.1 -g $rgName -s $sqlsvrName
+echo "Creating the SQL DB..."
+az sql db create --name $sqldbName --resource-group $rgName --server $sqlsvrName --service-objective S3  #--tags $myTags
+
+echo "Restore SQL DB"
+bloburi="https://$blobName.blob.core.windows.net/$containerName/$objName"
+time=2018-01-01T00:00:00Z
+sas=$(az storage blob generate-sas --account-name $blobName --container-name $containerName --name $objName --permissions r --expiry $time --output tsv)
+echo $sas
+az sql db import -s $sqlsvrName -n $sqldbName -g $rgName -p $sqlpwd -u $sqladm --storage-key $sas --storage-key-type SharedAccessKey --storage-uri $bloburi
+
+echo "Create ADLS"
+az dls account create --account $adlsName --resource-group $rgName --encryption-type ServiceManaged --tier Consumption --tags $myTags
+echo "Create ADLA"
+az dla account create --account $adlaName --default-data-lake-store $adlsName --resource-group $rgName --tags $myTags
+
+echo "Create Conatiner for ASLA script"
+az storage container create --name $containerName2 --connection-string $blobConn
+
+file_to_upload="./1.ADF/ADFUSQLScript/ProcessData.usql"
+objName="ProcessData.usql"
+echo "Upload a script"
+az storage blob upload --container-name $containerName2 --file $file_to_upload --name $objName --connection-string $blobConn
+
+az storage blob list --container-name $containerName2 --connection-string $blobConn --output table
+
+azStorageLinkedSvr='{
+    "name": "USQLScript",
+    "properties": {
+        "description": "",
+        "hubName": "bigdatademoadf_hub",
+        "type": "AzureStorage",
+        "typeProperties": {
+            "connectionString": "'$blobConn'"
+        }
+    }
+}
+'
+echo $azStorageLinkedSvr > ./1.ADF/ADFJson/USQLScript.json
+
+subId=$(az account list --query [].[id] --output tsv)
+tenantId=$(az account list --query [].[tenantId] --output tsv)
+rgName=bigdata-demo-rg
+adlsName=bigdataprocadls
+mypassword=TlqkfWhrxrkxdmsgkfnekTlqkf
+
+echo "Create SP for ADLA and ADLS"
+read sp_id sp_password <<< $(az ad sp create-for-rbac -n "azuredemo_DELETE_ME" --role contributor --scopes /subscriptions/$subId/resourceGroups/$rgName --query [appId,password] -o tsv)
+
+adlslinkedsvr='
+{
+    "name": "Destination-WWIDataLake",
+    "properties": {
+        "type": "AzureDataLakeStore",
+        "typeProperties": {
+            "dataLakeStoreUri": "https://'$adlsName'.azuredatalakestore.net/webhdfs/v1",
+            "servicePrincipalId": "'$sp_id'",
+            "servicePrincipalKey": "'$sp_password'",
+            "tenant": "'$tenantId'",
+            "subscriptionId": "'$subId'",
+            "resourceGroupName": "'$rgName'"
+        }
+    }
+}
+'
+
+echo $adlslinkedsvr > ./1.ADF/ADFJson/Destination-WWIDataLake.json
+
+
+azADLAlink='
+{
+    "name": "AzureDataLakeAnalyticsLinkedService",
+    "properties": {
+        "type": "AzureDataLakeAnalytics",
+        "description": "",
+        "typeProperties": {
+            "authorization": "",
+            "accountName": "'$adlaName'",
+            "subscriptionId": "'$subId'",
+            "resourceGroupName": "$rgName''",
+            "sessionId": ""
+        }
+    }
+}'
+echo $azADLAlink > ./1.ADF/ADFJson/AzureDataLakeAnalyticsLinkedService.json
+

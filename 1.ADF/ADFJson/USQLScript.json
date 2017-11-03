@@ -1,0 +1,1 @@
+{ "name": "USQLScript", "properties": { "description": "", "hubName": "bigdatademoadf_hub", "type": "AzureStorage", "typeProperties": { "connectionString": "DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=bigdatademoblob;AccountKey=P2P9UxcCxHg9qzm/wT+iYXs6h6TGFvEMYjGvlHrGQ+DhIL1r7lcRcp04Qov+/7mrAR2GWiwncOfCTwjolGjr2w==" } } }

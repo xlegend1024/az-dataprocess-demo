@@ -6,7 +6,7 @@
 # Blob storage account name
 blobName=bigdatademoblob
 # Container Name
-containerName=scripts
+containerName2=scripts
 
 #az storage account create --name $blobName --resource-group $rgName --sku Standard_LRS --location $loc --tags $myTags
 
@@ -15,15 +15,15 @@ blobConn=$(az storage account show-connection-string --name $blobName --resource
 echo $blobConn
 
 # Create the container
-az storage container create --name $containerName --connection-string $blobConn
+az storage container create --name $containerName2 --connection-string $blobConn
 
 # Upload a Script
 file_to_upload="./1.ADF/ADFUSQLScript/ProcessData.usql"
 objName="ProcessData.usql"
-az storage blob upload --container-name $containerName --file $file_to_upload --name $objName --connection-string $blobConn
+az storage blob upload --container-name $containerName2 --file $file_to_upload --name $objName --connection-string $blobConn
 
 # Listing the blobs
-az storage blob list --container-name $containerName --connection-string $blobConn --output table
+az storage blob list --container-name $containerName2 --connection-string $blobConn --output table
 
 azStorageLinkedSvr='{
     "name": "USQLScript",
@@ -38,4 +38,4 @@ azStorageLinkedSvr='{
 }
 ' 
 
-echo $azStorageLinkedSvr > ./1.ADF/AzureStorageLinkedService.json
+echo $azStorageLinkedSvr > ./1.ADF/ADFJson/USQLScript.json
