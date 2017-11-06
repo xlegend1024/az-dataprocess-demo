@@ -16,9 +16,8 @@ New-AzureRmDataFactoryDataset $adf -File .\1.ADF\ADFJson\input-dim-cust.json
 New-AzureRmDataFactoryDataset $adf -File .\1.ADF\ADFJson\input-dim-date.json
 New-AzureRmDataFactoryDataset $adf -File .\1.ADF\ADFJson\input-fact-sale.json
 
-# Can't get authorization via PowerShell
 New-AzureRmDataFactoryLinkedService $adf -File .\1.ADF\ADFJson\Destination-WWIDataLake.json
-#New-AzureRmDataFactoryLinkedService $adf -File .\1.ADF\ADFJson\AzureDataLakeAnalyticsLinkedService.json
+New-AzureRmDataFactoryLinkedService $adf -File .\1.ADF\ADFJson\AzureDataLakeAnalyticsLinkedService.json
 New-AzureRmDataFactoryDataset $adf -File .\1.ADF\ADFJson\ADLAOutput.json
 New-AzureRmDataFactoryDataset $adf -File .\1.ADF\ADFJson\output-dim-cust.json
 New-AzureRmDataFactoryDataset $adf -File .\1.ADF\ADFJson\output-dim-date.json
