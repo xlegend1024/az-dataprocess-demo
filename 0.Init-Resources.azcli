@@ -83,10 +83,6 @@ subId=$(az account list --query [].[id] --output tsv)
 tenantId=$(az account list --query [].[tenantId] --output tsv)
 rgName=bigdata-demo-rg
 adlsName=bigdataprocadls
-mypassword=TlqkfWhrxrkxdmsgkfnekTlqkf
-
-echo "Create SP for ADLA and ADLS"
-read sp_id sp_password <<< $(az ad sp create-for-rbac -n "azuredemo_DELETE_ME" --role contributor --scopes /subscriptions/$subId/resourceGroups/$rgName --query [appId,password] -o tsv)
 
 adlslinkedsvr='
 {
@@ -95,8 +91,8 @@ adlslinkedsvr='
         "type": "AzureDataLakeStore",
         "typeProperties": {
             "dataLakeStoreUri": "https://'$adlsName'.azuredatalakestore.net/webhdfs/v1",
-            "servicePrincipalId": "'$sp_id'",
-            "servicePrincipalKey": "'$sp_password'",
+            "servicePrincipalId": "",
+            "servicePrincipalKey": "",
             "tenant": "'$tenantId'",
             "subscriptionId": "'$subId'",
             "resourceGroupName": "'$rgName'"

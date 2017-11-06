@@ -24,4 +24,4 @@ New-AzureRmDataFactoryDataset $adf -File .\1.ADF\ADFJson\output-dim-cust.json
 New-AzureRmDataFactoryDataset $adf -File .\1.ADF\ADFJson\output-dim-date.json
 New-AzureRmDataFactoryDataset $adf -File .\1.ADF\ADFJson\output-fact-sale.json
 
-New-AzureRmDataFactoryLinkedService $adf -File .\1.ADF\ADFJson\CopyData_WWIDWtoADL.json
+New-AzureRmDataFactoryPipeline $adf -File .\1.ADF\ADFJson\CopyData_WWIDWtoADL.json
