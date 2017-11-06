@@ -1,4 +1,3 @@
-#!/bin/bash
 rgName=bigdata-demo-rg
 loc=eastus2
 blobName=bigdatademoblob
@@ -9,9 +8,11 @@ sqladm=sqladmin
 sqlpwd=1q2w3e4r5t6Y
 adlsName=bigdataprocadls
 adlaName=bigdataprocadla
+subId=$(az account list --query [].[id] --output tsv)
+tenantId=$(az account list --query [].[tenantId] --output tsv)
 containerName2=scripts
 myTags="Env=demo"
-echo $rgName, $myTags
+echo $subId, $tenantId, $rgName, $myTags
 
 echo "Creating the Resource Group"
 az group create --name $rgName --location $loc --tags $myTags
@@ -50,10 +51,17 @@ sas=$(az storage blob generate-sas --account-name $blobName --container-name $co
 echo $sas
 az sql db import -s $sqlsvrName -n $sqldbName -g $rgName -p $sqlpwd -u $sqladm --storage-key $sas --storage-key-type SharedAccessKey --storage-uri $bloburi
 
+read sp_id sp_password <<< $(az ad sp create-for-rbac -n "Dataprocess_delete_ME" --role contributor --scopes /subscriptions/$subId/resourceGroups/$rgName --password "1q2w3e4r5t6y7u8i9o0p-[=" --query [appId,password] -o tsv)
+#az ad sp delete --id http://Dataprocess_delete_ME
+
 echo "Create ADLS"
 az dls account create --account $adlsName --resource-group $rgName --encryption-type ServiceManaged --tier Consumption --tags $myTags
 echo "Create ADLA"
 az dla account create --account $adlaName --default-data-lake-store $adlsName --resource-group $rgName --tags $myTags
+
+az dls fs access set-owner --account $adlsName --path / --owner $sp_id --group $sp_id
+az dls fs access set-permission --account $adlsName --path / --permission 777
+#az dls fs access show --account $adlsName --path /
 
 echo "Create Conatiner for ASLA script"
 az storage container create --name $containerName2 --connection-string $blobConn
@@ -79,11 +87,6 @@ azStorageLinkedSvr='{
 '
 echo $azStorageLinkedSvr > ./1.ADF/ADFJson/USQLScript.json
 
-subId=$(az account list --query [].[id] --output tsv)
-tenantId=$(az account list --query [].[tenantId] --output tsv)
-rgName=bigdata-demo-rg
-adlsName=bigdataprocadls
-
 adlslinkedsvr='
 {
     "name": "Destination-WWIDataLake",
@@ -91,8 +94,8 @@ adlslinkedsvr='
         "type": "AzureDataLakeStore",
         "typeProperties": {
             "dataLakeStoreUri": "https://'$adlsName'.azuredatalakestore.net/webhdfs/v1",
-            "servicePrincipalId": "",
-            "servicePrincipalKey": "",
+            "servicePrincipalId": "'$sp_id'",
+            "servicePrincipalKey": "'$sp_password'",
             "tenant": "'$tenantId'",
             "subscriptionId": "'$subId'",
             "resourceGroupName": "'$rgName'"
@@ -109,13 +112,14 @@ azADLAlink='
     "name": "AzureDataLakeAnalyticsLinkedService",
     "properties": {
         "type": "AzureDataLakeAnalytics",
-        "description": "",
         "typeProperties": {
-            "authorization": "",
             "accountName": "'$adlaName'",
+            "dataLakeAnalyticsUri": "'$adlaName'.azuredatalakeanalytics.net",
+            "servicePrincipalId": "'$sp_id'",
+            "servicePrincipalKey": "'$sp_password'",
+            "tenant": "'$tenantId'",
             "subscriptionId": "'$subId'",
-            "resourceGroupName": "$rgName''",
-            "sessionId": ""
+            "resourceGroupName": "'$rgName'"
         }
     }
 }'
