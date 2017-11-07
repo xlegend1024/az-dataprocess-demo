@@ -9,6 +9,18 @@ $rgName="bigdata-demo-rg"
 $adfName="bigdatademoadf"
 $myTags="Env=demo"
 
+
+$appname = "bigdataprocadla"
+$dataLakeStoreName = “yourdatalakename”
+
+$app = Get-AzureRmADApplication -DisplayName $appname
+
+$servicePrincipal = Get-AzureRmADServicePrincipal  -SearchString $appname
+
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path / -AceType User -Id $servicePrincipal.Id -Permissions All
+
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /system -AceType User -Id $servicePrincipal.Id -Permissions All
+
 $adf=New-AzureRmDataFactory -ResourceGroupName $rgName -Name $adfName –Location "West US" 
 New-AzureRmDataFactoryLinkedService $adf -File .\1.ADF\ADFJson\Source-WWIDW.json
 New-AzureRmDataFactoryLinkedService $adf -File .\1.ADF\ADFJson\USQLScript.json

@@ -60,7 +60,17 @@ echo "Create ADLA"
 az dla account create --account $adlaName --default-data-lake-store $adlsName --resource-group $rgName --tags $myTags
 
 az dls fs access set-owner --account $adlsName --path / --owner $sp_id --group $sp_id
+az dls fs access set-owner --account $adlsName --path /system --owner $sp_id --group $sp_id
+az dls fs access set-owner --account $adlsName --path /catalog --owner $sp_id --group $sp_id
+az dls fs access set-owner --account $adlsName --path /usqlext --owner $sp_id --group $sp_id
 az dls fs access set-permission --account $adlsName --path / --permission 777
+az dls fs access set-permission --account $adlsName --path /system --permission 777
+az dls fs access set-permission --account $adlsName --path /catalog --permission 777
+az dls fs access set-permission --account $adlsName --path /usqlext --permission 777
+az dls fs access set-entry --account $adlsName --path / --acl-spec user:$sp_id:rwx
+az dls fs access set-entry --account $adlsName --path /system --acl-spec user:$sp_id:rwx
+az dls fs access set-entry --account $adlsName --path /catalog --acl-spec user:$sp_id:rwx
+az dls fs access set-entry --account $adlsName --path /usqlext --acl-spec user:$sp_id:rwx
 #az dls fs access show --account $adlsName --path /
 
 echo "Create Conatiner for ASLA script"
@@ -114,7 +124,6 @@ azADLAlink='
         "type": "AzureDataLakeAnalytics",
         "typeProperties": {
             "accountName": "'$adlaName'",
-            "dataLakeAnalyticsUri": "'$adlaName'.azuredatalakeanalytics.net",
             "servicePrincipalId": "'$sp_id'",
             "servicePrincipalKey": "'$sp_password'",
             "tenant": "'$tenantId'",
