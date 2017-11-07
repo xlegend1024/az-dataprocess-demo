@@ -9,19 +9,19 @@ $rgName="bigdata-demo-rg"
 $adfName="bigdatademoadf"
 $myTags="Env=demo"
 
-
+<#
 $spName = "Dataprocess_delete_ME"
 $dataLakeStoreName = "bigdataprocadls"
 $app = Get-AzureRmADApplication -DisplayName $spName
 $servicePrincipal = Get-AzureRmADServicePrincipal -SearchString $spName
-#New-AzureRmRoleAssignment -RoleDefinitionName Contributor -ServicePrincipalName $servicePrincipal.ApplicationId
-#Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path / -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
-#Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /system -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
-#Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /system/jobservice -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
-#Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /system/jobservice/jobs -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
-#Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /catalog -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
-#Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /usqlext -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
-
+##New-AzureRmRoleAssignment -RoleDefinitionName Contributor -ServicePrincipalName $servicePrincipal.ApplicationId
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path / -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /system -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /system/jobservice -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /system/jobservice/jobs -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /catalog -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /usqlext -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
+#>
 
 $adf=New-AzureRmDataFactory -ResourceGroupName $rgName -Name $adfName –Location "West US" 
 New-AzureRmDataFactoryLinkedService $adf -File .\1.ADF\ADFJson\Source-WWIDW.json
