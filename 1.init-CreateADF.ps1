@@ -58,7 +58,7 @@ Set-AzureRmDataLakeStoreItemAclEntry -AccountName $storageAccountName -Path /clu
 
 # Set these variables
 New-AzureRmHDInsightCluster `
-       -ClusterType Hadoop `
+       -ClusterType Spark `
        -OSType Linux `
        -ClusterSizeInNodes $clusterNodes `
        -ResourceGroupName $rgName `
