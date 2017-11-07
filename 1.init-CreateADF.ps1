@@ -3,23 +3,25 @@
 # for Adanvaced Data Analtyics
 # for ADF
 
-#Login-AzureRmAccount
+Login-AzureRmAccount
 $rgName="bigdata-demo-rg"
 #$loc="eastus2"
 $adfName="bigdatademoadf"
 $myTags="Env=demo"
 
 
-$appname = "bigdataprocadla"
-$dataLakeStoreName = “yourdatalakename”
+$spName = "Dataprocess_delete_ME"
+$dataLakeStoreName = "bigdataprocadls"
+$app = Get-AzureRmADApplication -DisplayName $spName
+$servicePrincipal = Get-AzureRmADServicePrincipal -SearchString $spName
+#New-AzureRmRoleAssignment -RoleDefinitionName Contributor -ServicePrincipalName $servicePrincipal.ApplicationId
+#Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path / -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
+#Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /system -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
+#Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /system/jobservice -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
+#Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /system/jobservice/jobs -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
+#Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /catalog -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
+#Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /usqlext -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
 
-$app = Get-AzureRmADApplication -DisplayName $appname
-
-$servicePrincipal = Get-AzureRmADServicePrincipal  -SearchString $appname
-
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path / -AceType User -Id $servicePrincipal.Id -Permissions All
-
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /system -AceType User -Id $servicePrincipal.Id -Permissions All
 
 $adf=New-AzureRmDataFactory -ResourceGroupName $rgName -Name $adfName –Location "West US" 
 New-AzureRmDataFactoryLinkedService $adf -File .\1.ADF\ADFJson\Source-WWIDW.json
