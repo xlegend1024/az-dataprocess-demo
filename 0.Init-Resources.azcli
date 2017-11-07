@@ -63,17 +63,23 @@ az dla account create --account $adlaName --default-data-lake-store $adlsName --
 # Create Output folders
 az dls fs create --account $adlsName --path /data/ --folder
 az dls fs create --account $adlsName --path /data/output --folder
+az dls fs create --account $adlsName --path /clusters --folder
+az dls fs create --account $adlsName --path /clusters/hdiadlcluster --folder
 
 az dls fs access set-owner --account $adlsName --path / --owner $sp_id --group $sp_id
 az dls fs access set-owner --account $adlsName --path /system --owner $sp_id --group $sp_id
 az dls fs access set-owner --account $adlsName --path /catalog --owner $sp_id --group $sp_id
 az dls fs access set-owner --account $adlsName --path /data --owner $sp_id --group $sp_id
 az dls fs access set-owner --account $adlsName --path /data/output --owner $sp_id --group $sp_id
+az dls fs access set-owner --account $adlsName --path /clusters --owner $sp_id --group $sp_id
+az dls fs access set-owner --account $adlsName --path /clusters/hdiadlcluster --owner $sp_id --group $sp_id
 az dls fs access set-permission --account $adlsName --path / --permission 777
 az dls fs access set-permission --account $adlsName --path /system --permission 777
 az dls fs access set-permission --account $adlsName --path /catalog --permission 777
 az dls fs access set-permission --account $adlsName --path /data --permission 777
 az dls fs access set-permission --account $adlsName --path /data/output --permission 777
+az dls fs access set-permission --account $adlsName --path /clusters --permission 777
+az dls fs access set-permission --account $adlsName --path /clusters/hdiadlcluster --permission 777
 #az dls fs access set-entry --account $adlsName --path / --acl-spec user:$sp_id:rwx
 #az dls fs access set-entry --account $adlsName --path /system --acl-spec user:$sp_id:rwx
 #az dls fs access set-entry --account $adlsName --path /catalog --acl-spec user:$sp_id:rwx
