@@ -10,15 +10,11 @@ $adfName="bigdatademoadf"
 $myTags="Env=demo"
 
 
-$appname = "bigdataprocadla"
-$dataLakeStoreName = “yourdatalakename”
-
+$appname = "Dataprocess_delete_ME"
+$dataLakeStoreName = "bigdataprocadls"
 $app = Get-AzureRmADApplication -DisplayName $appname
-
-$servicePrincipal = Get-AzureRmADServicePrincipal  -SearchString $appname
-
+$servicePrincipal = Get-AzureRmADServicePrincipal -SearchString $appname
 Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path / -AceType User -Id $servicePrincipal.Id -Permissions All
-
 Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /system -AceType User -Id $servicePrincipal.Id -Permissions All
 
 $adf=New-AzureRmDataFactory -ResourceGroupName $rgName -Name $adfName –Location "West US" 
