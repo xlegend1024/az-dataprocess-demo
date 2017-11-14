@@ -1,13 +1,21 @@
-#!/bin/bash
-# Gates Foundation Demo 
 # Create Demo environment
 # for Adanvaced Data Analtyics
-
-rgName=gatesfoundation-demo-rg
+rgName=bigdata-demo-rg
 loc=eastus2
-
-blobName=gatesblobdataml
+blobName=bigdatademoblob
 containerName=sampledata
+sqlsvrName=wwimsvr
+sqldbName=wwimdb
+sqldwName=wwimdw
+sqladm=sqladmin
+sqlpwd=1q2w3e4r5t6Y
+adlsName=bigdataprocadls
+adlaName=bigdataprocadla
+subId=$(az account list --query [].[id] --output tsv)
+tenantId=$(az account list --query [].[tenantId] --output tsv)
+containerName2=scripts
+myTags="Env=demo"
+echo $subId, $tenantId, $rgName, $myTags
 
 az storage account create --name $blobName --resource-group $rgName --sku Standard_LRS --location $loc --tags Env=Demo Account=GatesFoundation
 
@@ -18,7 +26,7 @@ echo "Creating the container..."
 az storage container create --name $containerName --connection-string $blobConn
 
 echo "Uploading the file..."
-file_to_upload="./SampleData/WideWorldImporters_Profit_ML.csv"
+file_to_upload="./5.MLv1/SampleData/WideWorldImporters_Profit_ML.csv"
 objName=WideWorldImporters_Profit_ML.csv
 az storage blob upload --container-name $containerName --file $file_to_upload --name $objName --connection-string $blobConn
 
