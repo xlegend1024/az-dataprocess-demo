@@ -1,19 +1,22 @@
+#!/bin/bash
+
+subId=$(az account list --query [].[id] --output tsv)
+tenantId=$(az account list --query [].[tenantId] --output tsv)
 rgName=bigdata-demo-rg
 loc=eastus2
-blobName=bigdatademoblob
+blobName=bigdatademo$RANDOM
 containerName=sampledata
-sqlsvrName=wwimsvr
+sqlsvrName=wwimsvr$RANDOM
 sqldbName=wwimdb
 sqladm=sqladmin
 sqlpwd=1q2w3e4r5t6Y
-adlsName=bigdataprocadls
-adlaName=bigdataprocadla
+adlsName=adls$RANDOM
+adlaName=adla$RANDOM
 spName=Dataprocess_delete_ME
-subId=$(az account list --query [].[id] --output tsv)
-tenantId=$(az account list --query [].[tenantId] --output tsv)
 containerName2=scripts
 myTags="Env=demo"
 echo $subId, $tenantId, $rgName, $myTags
+echo $blobName, $sqlsvrName, $adlsName, $adlaName
 
 echo "Creating the Resource Group"
 az group create --name $rgName --location $loc --tags $myTags
