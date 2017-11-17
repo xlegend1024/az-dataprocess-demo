@@ -1,7 +1,9 @@
 #!/bin/bash
 
 subId=$(az account list --query [].[id] --output tsv)
+sleep 3
 tenantId=$(az account list --query [].[tenantId] --output tsv)
+sleep 3
 rgName=bigdata-demo-rg
 loc=eastus2
 blobName=bigdatademo$RANDOM
