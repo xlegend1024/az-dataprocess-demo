@@ -4,7 +4,7 @@ tenantId=$(az account list --query [].[tenantId] --output tsv)
 sleep 3
 rgName=bigdata-demo-rg
 loc=eastus2
-blobName=bigdatademo$RANDOM #Save it as ps1
+blobName=demo$RANDOM #Save it as ps1
 containerName=sampledata
 sqlsvrName=wwimsvr$RANDOM #Save it as ps1
 sqldbName=wwimdb
@@ -20,6 +20,8 @@ myTags="Env=demo"
 echo $subId, $tenantId, $rgName, $myTags
 echo $blobName, $sqlsvrName, $adlsName, $adlaName
 
+mkdir $HOME/1.ADF/
+mkdir $HOME/1.ADF/ADFJson
 cp ./1.ADF/ADFJson/* $HOME/1.ADF/ADFJson/
 
 echo "Creating the Resource Group"
