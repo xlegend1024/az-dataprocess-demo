@@ -3,7 +3,7 @@
 # for Adanvaced Data Analtyics
 # for ADF
 
-Login-AzureRmAccount
+#Login-AzureRmAccount
 $rgName="bigdata-demo-rg"
 $loc="eastus2"
 $adfName="bigdatademoadf"

@@ -1,19 +1,17 @@
-#!/bin/bash
-
 subId=$(az account list --query [].[id] --output tsv)
 sleep 3
 tenantId=$(az account list --query [].[tenantId] --output tsv)
 sleep 3
 rgName=bigdata-demo-rg
 loc=eastus2
-blobName=bigdatademo$RANDOM
+blobName=bigdatademo$RANDOM #Save it as ps1
 containerName=sampledata
-sqlsvrName=wwimsvr$RANDOM
+sqlsvrName=wwimsvr$RANDOM #Save it as ps1
 sqldbName=wwimdb
 sqladm=sqladmin
 sqlpwd=1q2w3e4r5t6Y
-adlsName=adls$RANDOM
-adlaName=adla$RANDOM
+adlsName=adls$RANDOM #Save it as ps1
+adlaName=adla$RANDOM #Save it as ps1
 spName=Dataprocess_delete_ME
 containerName2=scripts
 myTags="Env=demo"
@@ -152,4 +150,3 @@ azADLAlink='
     }
 }'
 echo $azADLAlink > ./1.ADF/ADFJson/AzureDataLakeAnalyticsLinkedService.json
-
