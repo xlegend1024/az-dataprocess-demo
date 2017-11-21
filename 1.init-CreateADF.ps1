@@ -2,7 +2,7 @@
 # This script will create demo environment
 # for Adanvaced Data Analtyics
 
-$HOME\clouddrive\psParam.ps1
+& $HOME\clouddrive\psParam.ps1
 <#
 $blobName='$blobName'
 $adlsName='$adlsName'
@@ -16,12 +16,14 @@ $myTags="Env=demo"
 $spName = "Dataprocess_delete_ME"
 $spNameHDI="Dataprocess_delete_ME_HDI"
 $spPWDHDI="1q2w3e4r5t^Y"
-$certificateFilePath="$HOME/3.HDI/cert-download.pfx"
+$certificateFilePath="$HOME\clouddrive\3.HDI\cert-download.pfx"
 $dataLakeStoreName = $adlsName
 $storageAccountName = $adlsName # Data Lake Store account name
 $storageRootPath = "/clusters/hdiadlcluster" # E.g. /clusters/hdiadlcluster
 $clusterNodes = 2 # The number of nodes in the HDInsight cluster
+write-host "HDInsight admin"
 $httpCredentials = Get-Credential
+write-host "HDInsight user"
 $sshCredentials = Get-Credential
 $tenantID = (Get-AzureRmContext).Tenant.TenantId
 
