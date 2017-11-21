@@ -169,9 +169,9 @@ $blobName='$blobName'
 $adlsName='$adlsName'
 $adlaName='$adlaName'
 $clusterName='$clusterName'
-$adfName='adfName'
-$rgName='rgName'
-'
+$adfName='$adfName'
+$rgName='$rgName
+
 echo $psParam > $HOME/clouddrive/psParam.ps1
 
-cp ./1.init-CreateADF.ps1 $HOME/clouddrive/1_init.ps1
+cp ./1.init-CreateADF.ps1 $HOME/clouddrive/1adfinit.ps1
