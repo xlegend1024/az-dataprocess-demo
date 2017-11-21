@@ -2,7 +2,7 @@
 # This script will create demo environment
 # for Adanvaced Data Analtyics
 
-$HOME\CloudDrive\psParam.ps1
+$HOME\clouddrive\psParam.ps1
 <#
 $blobName='$blobName'
 $adlsName='$adlsName'
