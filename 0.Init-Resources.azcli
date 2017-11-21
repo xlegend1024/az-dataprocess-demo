@@ -12,11 +12,15 @@ sqladm=sqladmin
 sqlpwd=1q2w3e4r5t6Y
 adlsName=adls$RANDOM #Save it as ps1
 adlaName=adla$RANDOM #Save it as ps1
+clusterName=hdi$RANDOM # Save it as ps1
+adfName=adf$RANDOM #Save it as ps1
 spName=Dataprocess_delete_ME
 containerName2=scripts
 myTags="Env=demo"
 echo $subId, $tenantId, $rgName, $myTags
 echo $blobName, $sqlsvrName, $adlsName, $adlaName
+
+cp ./1.ADF/ADFJson/* $HOME/1.ADF/ADFJson/
 
 echo "Creating the Resource Group"
 az group create --name $rgName --location $loc --tags $myTags
@@ -113,6 +117,8 @@ azStorageLinkedSvr='{
 }
 '
 echo $azStorageLinkedSvr > ./1.ADF/ADFJson/USQLScript.json
+# on Cloud Shell .\CloudDrive\
+echo $azStorageLinkedSvr > $HOME/CloudDrive/1.ADF/ADFJson/USQLScript.json
 
 adlslinkedsvr='
 {
@@ -132,7 +138,8 @@ adlslinkedsvr='
 '
 
 echo $adlslinkedsvr > ./1.ADF/ADFJson/Destination-WWIDataLake.json
-
+# on Cloud Shell .\CloudDrive\
+echo $azStorageLinkedSvr > $HOME/CloudDrive/1.ADF/ADFJson/Destination-WWIDataLake.json
 
 azADLAlink='
 {
@@ -150,3 +157,16 @@ azADLAlink='
     }
 }'
 echo $azADLAlink > ./1.ADF/ADFJson/AzureDataLakeAnalyticsLinkedService.json
+# on Cloud Shell .\CloudDrive\
+echo $azStorageLinkedSvr > $HOME/CloudDrive/1.ADF/ADFJson/AzureDataLakeAnalyticsLinkedService.json
+
+cp ./3.HDI/cert-download.pfx $HOME/CloudDrive/3.HDI/cert-download.pfx
+
+psParam='
+$blobName='$blobName'
+$adlsName='$adlsName'
+$adlaName='$adlaName'
+$clusterName='$clusterName'
+$adfName='adfName'
+'
+echo $psParam > $HOME/CloudDrive/psParam.ps1

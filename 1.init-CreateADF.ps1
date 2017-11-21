@@ -1,22 +1,26 @@
 # Data Process Demo 
 # This script will create demo environment
 # for Adanvaced Data Analtyics
-# for ADF
 
-#Login-AzureRmAccount
+$HOME\CloudDrive\psParam.ps1
+<#
+$blobName='$blobName'
+$adlsName='$adlsName'
+$adlaName='$adlaName'
+$clusterName='$clusterName'
+$adfName='adfName'
+#>
 $rgName="bigdata-demo-rg"
 $loc="eastus2"
-$adfName="bigdatademoadf"
 $myTags="Env=demo"
 $spName = "Dataprocess_delete_ME"
 $spNameHDI="Dataprocess_delete_ME_HDI"
 $spPWDHDI="1q2w3e4r5t^Y"
-$certificateFilePath="./3.HDI/cert-download.pfx"
-$dataLakeStoreName = "bigdataprocadls"
-$storageAccountName = $dataLakeStoreName                       # Data Lake Store account name
+$certificateFilePath="$HOME/3.HDI/cert-download.pfx"
+$dataLakeStoreName = $adlsName
+$storageAccountName = $adlsName # Data Lake Store account name
 $storageRootPath = "/clusters/hdiadlcluster" # E.g. /clusters/hdiadlcluster
-$clusterName = "bigdatahdispk"
-$clusterNodes = 2            # The number of nodes in the HDInsight cluster
+$clusterNodes = 2 # The number of nodes in the HDInsight cluster
 $httpCredentials = Get-Credential
 $sshCredentials = Get-Credential
 $tenantID = (Get-AzureRmContext).Tenant.TenantId
@@ -35,20 +39,20 @@ Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /clus
 #>
 
 $adf=New-AzureRmDataFactory -ResourceGroupName $rgName -Name $adfName –Location "West US" 
-New-AzureRmDataFactoryLinkedService $adf -File .\1.ADF\ADFJson\Source-WWIDW.json
-New-AzureRmDataFactoryLinkedService $adf -File .\1.ADF\ADFJson\USQLScript.json
-New-AzureRmDataFactoryDataset $adf -File .\1.ADF\ADFJson\input-dim-cust.json
-New-AzureRmDataFactoryDataset $adf -File .\1.ADF\ADFJson\input-dim-date.json
-New-AzureRmDataFactoryDataset $adf -File .\1.ADF\ADFJson\input-fact-sale.json
+New-AzureRmDataFactoryLinkedService $adf -File $HOME\CloudDrive\1.ADF\ADFJson\Source-WWIDW.json
+New-AzureRmDataFactoryLinkedService $adf -File $HOME\CloudDrive\1.ADF\ADFJson\USQLScript.json
+New-AzureRmDataFactoryDataset $adf -File $HOME\CloudDrive\1.ADF\ADFJson\input-dim-cust.json
+New-AzureRmDataFactoryDataset $adf -File $HOME\CloudDrive\1.ADF\ADFJson\input-dim-date.json
+New-AzureRmDataFactoryDataset $adf -File $HOME\CloudDrive\1.ADF\ADFJson\input-fact-sale.json
 
-New-AzureRmDataFactoryLinkedService $adf -File .\1.ADF\ADFJson\Destination-WWIDataLake.json
-New-AzureRmDataFactoryLinkedService $adf -File .\1.ADF\ADFJson\AzureDataLakeAnalyticsLinkedService.json
-New-AzureRmDataFactoryDataset $adf -File .\1.ADF\ADFJson\ADLAOutput.json
-New-AzureRmDataFactoryDataset $adf -File .\1.ADF\ADFJson\output-dim-cust.json
-New-AzureRmDataFactoryDataset $adf -File .\1.ADF\ADFJson\output-dim-date.json
-New-AzureRmDataFactoryDataset $adf -File .\1.ADF\ADFJson\output-fact-sale.json
+New-AzureRmDataFactoryLinkedService $adf -File $HOME\CloudDrive\1.ADF\ADFJson\Destination-WWIDataLake.json
+New-AzureRmDataFactoryLinkedService $adf -File $HOME\CloudDrive\1.ADF\ADFJson\AzureDataLakeAnalyticsLinkedService.json
+New-AzureRmDataFactoryDataset $adf -File $HOME\CloudDrive\1.ADF\ADFJson\ADLAOutput.json
+New-AzureRmDataFactoryDataset $adf -File $HOME\CloudDrive\1.ADF\ADFJson\output-dim-cust.json
+New-AzureRmDataFactoryDataset $adf -File $HOME\CloudDrive\1.ADF\ADFJson\output-dim-date.json
+New-AzureRmDataFactoryDataset $adf -File $HOME\CloudDrive\1.ADF\ADFJson\output-fact-sale.json
 
-New-AzureRmDataFactoryPipeline $adf -File .\1.ADF\ADFJson\CopyData_WWIDWtoADL.json
+New-AzureRmDataFactoryPipeline $adf -File $HOME\CloudDrive\1.ADF\ADFJson\CopyData_WWIDWtoADL.json
 
 #HDI with ADLS
 $servicePrincipalHDI = Get-AzureRmADServicePrincipal -SearchString $spNameHDI
