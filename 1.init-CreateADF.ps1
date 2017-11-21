@@ -63,20 +63,4 @@ Set-AzureRmDataLakeStoreItemAclEntry -AccountName $storageAccountName -Path /clu
 Set-AzureRmDataLakeStoreItemAclEntry -AccountName $storageAccountName -Path /clusters/hdiadlcluster -AceType User -Id $servicePrincipalHDI.Id -Permissions All
 
 # Set these variables
-New-AzureRmHDInsightCluster `
-       -ClusterType Spark `
-       -OSType Linux `
-       -ClusterSizeInNodes $clusterNodes `
-       -ResourceGroupName $rgName `
-       -ClusterName $clusterName `
-       -HttpCredential $httpCredentials `
-       -Location $loc `
-       -DefaultStorageAccountType AzureDataLakeStore `
-       -DefaultStorageAccountName "$storageAccountName.azuredatalakestore.net" `
-       -DefaultStorageRootPath $storageRootPath `
-       -Version "3.6" `
-       -SshCredential $sshCredentials `
-       -AadTenantId $tenantId `
-       -ObjectId $servicePrincipalHDI.Id `
-       -CertificateFilePath $certificateFilePath `
-       -CertificatePassword $spPWDHDI
+New-AzureRmHDInsightCluster -ClusterType Spark -OSType Linux -ClusterSizeInNodes $clusterNodes -ResourceGroupName $rgName -ClusterName $clusterName -HttpCredential $httpCredentials -Location $loc -DefaultStorageAccountType AzureDataLakeStore -DefaultStorageAccountName "$storageAccountName.azuredatalakestore.net" -DefaultStorageRootPath $storageRootPath -Version "3.6" -SshCredential $sshCredentials -AadTenantId $tenantId -ObjectId $servicePrincipalHDI.Id -CertificateFilePath $certificateFilePath -CertificatePassword $spPWDHDI

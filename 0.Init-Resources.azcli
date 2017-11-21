@@ -62,7 +62,7 @@ echo $sas
 az sql db import -s $sqlsvrName -n $sqldbName -g $rgName -p $sqlpwd -u $sqladm --storage-key $sas --storage-key-type SharedAccessKey --storage-uri $bloburi
 
 read sp_id sp_password <<< $(az ad sp create-for-rbac -n $spName --role contributor --scopes /subscriptions/$subId/resourceGroups/$rgName --password "1q2w3e4r5t6y7u8i9o0p-[=" --query [appId,password] -o tsv)
-#az ad sp delete --id $spName
+#az ad sp delete --id 'http://'$spName
 
 echo "Create ADLS"
 az dls account create --account $adlsName --resource-group $rgName --encryption-type ServiceManaged --tier Consumption --tags $myTags
@@ -165,13 +165,14 @@ echo $azStorageLinkedSvr > $HOME/clouddrive/1.ADF/ADFJson/AzureDataLakeAnalytics
 cp ./3.HDI/cert-download.pfx $HOME/clouddrive/3.HDI/cert-download.pfx
 
 psParam='
-$blobName='$blobName'
-$adlsName='$adlsName'
-$adlaName='$adlaName'
-$clusterName='$clusterName'
-$adfName='$adfName'
-$rgName='$rgName
+$blobName="'$blobName'"
+$adlsName="'$adlsName'"
+$adlaName="'$adlaName'"
+$clusterName="'$clusterName'"
+$adfName="'$adfName'"
+$rgName="'$rgName'"'
 
 echo $psParam > $HOME/clouddrive/psParam.ps1
 
 cp ./1.init-CreateADF.ps1 $HOME/clouddrive/1adfinit.ps1
+
