@@ -9,8 +9,8 @@ $adlsName='$adlsName'
 $adlaName='$adlaName'
 $clusterName='$clusterName'
 $adfName='adfName'
-#>
 $rgName="bigdata-demo-rg"
+#>
 $loc="eastus2"
 $myTags="Env=demo"
 $spName = "Dataprocess_delete_ME"

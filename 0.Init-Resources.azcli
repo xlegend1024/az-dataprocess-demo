@@ -2,7 +2,7 @@ subId=$(az account list --query [].[id] --output tsv)
 sleep 3
 tenantId=$(az account list --query [].[tenantId] --output tsv)
 sleep 3
-rgName=bigdata-demo-rg
+rgName=data-$RANDOM-rg #Save it as ps1
 loc=eastus2
 blobName=demo$RANDOM #Save it as ps1
 containerName=sampledata
@@ -170,6 +170,7 @@ $adlsName='$adlsName'
 $adlaName='$adlaName'
 $clusterName='$clusterName'
 $adfName='adfName'
+$rgName='rgName'
 '
 echo $psParam > $HOME/clouddrive/psParam.ps1
 
