@@ -170,3 +170,5 @@ $clusterName='$clusterName'
 $adfName='adfName'
 '
 echo $psParam > $HOME/CloudDrive/psParam.ps1
+
+cp ./1.init-CreateADF.ps1 $HOME/CloudDrive/1_init.ps1
