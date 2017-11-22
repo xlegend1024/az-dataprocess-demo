@@ -10,6 +10,7 @@ $adlaName=$params.adlaName
 $clusterName=$params.clusterName
 $adfName=$params.adfName 
 $loc="eastus2"
+$spName="Dataprocess_delete_ME"
 $spNameHDI="Dataprocess_delete_ME_HDI"
 $spPWDHDI="1q2w3e4r5t^Y"
 $certificateFilePath="$HOME\clouddrive\3.HDI\cert-download.pfx"
@@ -24,18 +25,16 @@ write-host "*** For example, azureuser ***"
 $sshCredentials = Get-Credential
 $tenantID = (Get-AzureRmContext).Tenant.TenantId
 
-<#
-$app = Get-AzureRmADApplication -DisplayName $spName
-$servicePrincipal = Get-AzureRmADServicePrincipal -SearchString $spName
+$app = (Get-AzureRmADApplication -DisplayName $spName)[0]
 
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path / -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /system -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /catalog -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /data -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /data/output -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /clusters -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $dataLakeStoreName -Path /clusters/hdiadlcluster -AceType User -Id $servicePrincipal.ApplicationId -Permissions All -Verbose
-#>
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path / -AceType User -Id $app.ApplicationId -Permissions All -Verbose
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /system -AceType User -Id $app.ApplicationId -Permissions All -Verbose
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /catalog -AceType User -Id $app.ApplicationId -Permissions All -Verbose
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /data -AceType User -Id $app.ApplicationId -Permissions All -Verbose
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /data/output -AceType User -Id $app.ApplicationId -Permissions All -Verbose
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /clusters -AceType User -Id $app.ApplicationId -Permissions All -Verbose
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /clusters/hdiadlcluster -AceType User -Id $app.ApplicationId -Permissions All -Verbose
+
 
 $adf=New-AzureRmDataFactory -ResourceGroupName $rgName -Name $adfName –Location "West US" 
 New-AzureRmDataFactoryLinkedService $adf -File $HOME\CloudDrive\1.ADF\ADFJson\Source-WWIDW.json
