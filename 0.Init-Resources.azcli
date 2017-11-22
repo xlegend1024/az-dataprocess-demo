@@ -68,10 +68,10 @@ az dla account create --account $adlaName --default-data-lake-store $adlsName --
 
 # Create Output folders
 ## Not working on Cloud Bash Shell
-az dls fs create --account $adlsName --path /data/ --folder
-az dls fs create --account $adlsName --path /data/output --folder
-az dls fs create --account $adlsName --path /clusters --folder
-az dls fs create --account $adlsName --path /clusters/hdiadlcluster --folder
+#az dls fs create --account $adlsName --path /data/ --folder
+#az dls fs create --account $adlsName --path /data/output --folder
+#az dls fs create --account $adlsName --path /clusters --folder
+#az dls fs create --account $adlsName --path /clusters/hdiadlcluster --folder
 
 az dls fs access set-owner --account $adlsName --path / --owner $sp_id --group $sp_id
 az dls fs access set-owner --account $adlsName --path /system --owner $sp_id --group $sp_id

@@ -26,15 +26,24 @@ $sshCredentials = Get-Credential
 $tenantID = (Get-AzureRmContext).Tenant.TenantId
 
 $app = (Get-AzureRmADApplication -DisplayName $spName)[0]
+$myrootdir = "/"
+New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path $myrootdir/data
+New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path $myrootdir/data/output
+New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path $myrootdir/clusters
+New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path $myrootdir/clusters/hdiadlcluste
 
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path / -AceType User -Id $app.ApplicationId -Permissions All -Verbose
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /system -AceType User -Id $app.ApplicationId -Permissions All -Verbose
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /catalog -AceType User -Id $app.ApplicationId -Permissions All -Verbose
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /data -AceType User -Id $app.ApplicationId -Permissions All -Verbose
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /data/output -AceType User -Id $app.ApplicationId -Permissions All -Verbose
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /clusters -AceType User -Id $app.ApplicationId -Permissions All -Verbose
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /clusters/hdiadlcluster -AceType User -Id $app.ApplicationId -Permissions All -Verbose
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path / -AceType User -Id $app.ApplicationId -Permissions All
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /system -AceType User -Id $app.ApplicationId -Permissions All 
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /catalog -AceType User -Id $app.ApplicationId -Permissions All 
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /data -AceType User -Id $app.ApplicationId -Permissions All
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /data/output -AceType User -Id $app.ApplicationId -Permissions All
+#Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /clusters -AceType User -Id $app.ApplicationId -Permissions All
+#Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /clusters/hdiadlcluster -AceType User -Id $app.ApplicationId -Permissions All
 
+Set-AzureRmDataLakeStoreItemPermission -Account $adlsName -Path $myrootdir/data -Permission 777
+Set-AzureRmDataLakeStoreItemPermission -Account $adlsName -Path $myrootdir/data/output -Permission 777
+Set-AzureRmDataLakeStoreItemPermission -Account $adlsName -Path $myrootdir/clusters -Permission 777
+Set-AzureRmDataLakeStoreItemPermission -Account $adlsName -Path $myrootdir/clusters/hdiadlcluste -Permission 777
 
 $adf=New-AzureRmDataFactory -ResourceGroupName $rgName -Name $adfName –Location "West US" 
 New-AzureRmDataFactoryLinkedService $adf -File $HOME\CloudDrive\1.ADF\ADFJson\Source-WWIDW.json
