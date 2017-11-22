@@ -2,15 +2,13 @@
 # This script will create demo environment
 # for Adanvaced Data Analtyics
 cd $HOME
-& $HOME\clouddrive\psParam.ps1
-<#
-$blobName='$blobName'
-$adlsName='$adlsName'
-$adlaName='$adlaName'
-$clusterName='$clusterName'
-$adfName='adfName'
-$rgName="bigdata-demo-rg"
-#>
+$params = Get-Content $HOME\clouddrive\psParam2.dat | Out-String | ConvertFrom-StringData
+$rgName=$params.rgName
+$blobName=$params.blobName
+$adlsName=$params.adlsName
+$adlaName=$params.adlaName
+$clusterName=$params.clusterName
+$adfName=$params.adfName 
 $loc="eastus2"
 $spNameHDI="Dataprocess_delete_ME_HDI"
 $spPWDHDI="1q2w3e4r5t^Y"
