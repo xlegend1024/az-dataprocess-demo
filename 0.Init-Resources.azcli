@@ -343,21 +343,14 @@ echo $pipeline > $HOME/clouddrive/1.ADF/ADFJson/CopyData_WWIDWtoADL.json
 
 cp ./3.HDI/cert-download.pfx $HOME/clouddrive/3.HDI/cert-download.pfx
 
-psParam='
-$blobName="'$blobName'"
-
-$adlsName="'$adlsName'"
-
-$adlaName="'$adlaName'"
-
-$clusterName="'$clusterName'"
-
-$adfName="'$adfName'"
-
-$rgName="'$rgName'"
-'
-
-echo $psParam > $HOME/clouddrive/psParam.ps1
+printf '
+$blobName="'$blobName'"\n
+$adlsName="'$adlsName'"\n
+$adlaName="'$adlaName'"\n
+$clusterName="'$clusterName'"\n
+$adfName="'$adfName'"\n
+$rgName="'$rgName'"\n
+' > $HOME/clouddrive/psParam.ps1
 
 cp ./1.init-CreateADF.ps1 $HOME/clouddrive/adfinit.ps1
 
