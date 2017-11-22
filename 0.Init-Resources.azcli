@@ -135,7 +135,7 @@ adlslinkedsvr='
 
 echo $adlslinkedsvr > ./1.ADF/ADFJson/Destination-WWIDataLake.json
 # on Cloud Shell .\CloudDrive\
-echo $azStorageLinkedSvr > $HOME/clouddrive/1.ADF/ADFJson/Destination-WWIDataLake.json
+echo $adlslinkedsvr > $HOME/clouddrive/1.ADF/ADFJson/Destination-WWIDataLake.json
 
 azADLAlink='
 {
@@ -154,7 +154,7 @@ azADLAlink='
 }'
 echo $azADLAlink > ./1.ADF/ADFJson/AzureDataLakeAnalyticsLinkedService.json
 # on Cloud Shell .\CloudDrive\
-echo $azStorageLinkedSvr > $HOME/clouddrive/1.ADF/ADFJson/AzureDataLakeAnalyticsLinkedService.json
+echo $azADLAlink > $HOME/clouddrive/1.ADF/ADFJson/AzureDataLakeAnalyticsLinkedService.json
 
 srcwwidw='
 {
