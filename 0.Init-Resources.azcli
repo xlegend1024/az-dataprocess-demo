@@ -21,6 +21,7 @@ myTags="Env=demo"
 # Create ADF directories
 mkdir $HOME/clouddrive/1.ADF/
 mkdir $HOME/clouddrive/1.ADF/ADFJson
+mkdir $HOME/clouddrive/3.HDI/
 
 # Copy JSON files
 cp ./1.ADF/ADFJson/* $HOME/clouddrive/1.ADF/ADFJson/
