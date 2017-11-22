@@ -58,6 +58,7 @@ sas=$(az storage blob generate-sas --account-name $blobName --container-name $co
 az sql db import -s $sqlsvrName -n $sqldbName -g $rgName -p $sqlpwd -u $sqladm --storage-key $sas --storage-key-type SharedAccessKey --storage-uri $bloburi
 # if sp is exsit remove the sp
 az ad sp delete --id 'http://'$spName
+az ad sp delete --id 'http://'$spName'_HDI'
 # create sp for
 read sp_id sp_password <<< $(az ad sp create-for-rbac -n $spName --role contributor --scopes /subscriptions/$subId/resourceGroups/$rgName --password "1q2w3e4r5t6y7u8i9o0p-[=" --query [appId,password] -o tsv)
 
