@@ -17,56 +17,52 @@ adfName=adf$RANDOM #Save it as ps1
 spName=Dataprocess_delete_ME
 containerName2=scripts
 myTags="Env=demo"
-echo $subId, $tenantId, $rgName, $myTags
-echo $blobName, $sqlsvrName, $adlsName, $adlaName
 
+# Create ADF directories
 mkdir $HOME/clouddrive/1.ADF/
 mkdir $HOME/clouddrive/1.ADF/ADFJson
+
+# Copy JSON files
 cp ./1.ADF/ADFJson/* $HOME/clouddrive/1.ADF/ADFJson/
 
-echo "Creating the Resource Group"
+# Create the Resource Group
 az group create --name $rgName --location $loc --tags $myTags
 
-echo "Creating the Storage Account..."
+# Create the Storage Account
 az storage account create --name $blobName --resource-group $rgName --sku Standard_LRS --location $loc --tags $myTags
-
 blobConn=$(az storage account show-connection-string --name $blobName --resource-group $rgName --output tsv)
-echo $blobConn
-
-echo "Creating the container..."
+# Create a container
 az storage container create --name $containerName --connection-string $blobConn
 
-echo "Download Sample DB"
+# Download Sample DB
 file_to_upload="./WideWorldImportersDW-Standard.bacpac"
 objName=WideWorldImportersDW-Standard.bacpac
 wget -O $file_to_upload https://github.com/Microsoft/sql-server-samples/releases/download/wide-world-importers-v1.0/WideWorldImportersDW-Standard.bacpac
 
-echo "Uploading a SQLDB Backup file..."
+# Uploading a SQLDB Backup file
 az storage blob upload --container-name $containerName --file $file_to_upload --name $objName --connection-string $blobConn
+# Get container list
+#az storage blob list --container-name $containerName --connection-string $blobConn --output table
 
-echo "Listing the blobs..."
-az storage blob list --container-name $containerName --connection-string $blobConn --output table
-
-echo "Creating the SQL Server"
+# Create a SQL Server
 az sql server create --admin-user $sqladm --admin-password $sqlpwd --location $loc --name $sqlsvrName --resource-group $rgName #--tags $myTags
-echo "Update Firewall rules"
+# Update SQL Server Firewall rule
 az sql server firewall-rule create -n openall --start-ip-address 1.1.1.1 --end-ip-addres 255.1.1.1 -g $rgName -s $sqlsvrName
-echo "Creating the SQL DB..."
+# Create a SQL DB
 az sql db create --name $sqldbName --resource-group $rgName --server $sqlsvrName --service-objective S3  #--tags $myTags
-
-echo "Restore SQL DB"
+# Restore a SQL DB
 bloburi="https://$blobName.blob.core.windows.net/$containerName/$objName"
 time=2018-01-01T00:00:00Z
 sas=$(az storage blob generate-sas --account-name $blobName --container-name $containerName --name $objName --permissions r --expiry $time --output tsv)
-echo $sas
 az sql db import -s $sqlsvrName -n $sqldbName -g $rgName -p $sqlpwd -u $sqladm --storage-key $sas --storage-key-type SharedAccessKey --storage-uri $bloburi
-
+# if sp is exsit remove the sp
+az ad sp delete --id 'http://'$spName
+# create sp for
 read sp_id sp_password <<< $(az ad sp create-for-rbac -n $spName --role contributor --scopes /subscriptions/$subId/resourceGroups/$rgName --password "1q2w3e4r5t6y7u8i9o0p-[=" --query [appId,password] -o tsv)
-#az ad sp delete --id 'http://'$spName
 
-echo "Create ADLS"
+# Create ADLS
 az dls account create --account $adlsName --resource-group $rgName --encryption-type ServiceManaged --tier Consumption --tags $myTags
-echo "Create ADLA"
+# Create ADLA
 az dla account create --account $adlaName --default-data-lake-store $adlsName --resource-group $rgName --tags $myTags
 
 # Create Output folders
@@ -96,15 +92,13 @@ az dls fs access set-permission --account $adlsName --path /clusters/hdiadlclust
 #az dls fs access set-entry --account $adlsName --path /data/output --acl-spec user:$sp_id:rwx
 #az dls fs access show --account $adlsName --path /data/output
 
-echo "Create Conatiner for ASLA script"
+# Create Conatiner for ASLA script
 az storage container create --name $containerName2 --connection-string $blobConn
-
 file_to_upload="./1.ADF/ADFUSQLScript/ProcessData.usql"
 objName="ProcessData.usql"
-echo "Upload a script"
+# Upload a script
 az storage blob upload --container-name $containerName2 --file $file_to_upload --name $objName --connection-string $blobConn
-
-az storage blob list --container-name $containerName2 --connection-string $blobConn --output table
+#az storage blob list --container-name $containerName2 --connection-string $blobConn --output table
 
 azStorageLinkedSvr='{
     "name": "USQLScript",
@@ -365,5 +359,5 @@ $rgName="'$rgName'"
 
 echo $psParam > $HOME/clouddrive/psParam.ps1
 
-cp ./1.init-CreateADF.ps1 $HOME/clouddrive/1adfinit.ps1
+cp ./1.init-CreateADF.ps1 $HOME/clouddrive/adfinit.ps1
 

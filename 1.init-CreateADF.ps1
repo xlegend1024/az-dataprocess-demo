@@ -12,18 +12,17 @@ $adfName='adfName'
 $rgName="bigdata-demo-rg"
 #>
 $loc="eastus2"
-$myTags="Env=demo"
-$spName = "Dataprocess_delete_ME"
 $spNameHDI="Dataprocess_delete_ME_HDI"
 $spPWDHDI="1q2w3e4r5t^Y"
 $certificateFilePath="$HOME\clouddrive\3.HDI\cert-download.pfx"
-$dataLakeStoreName = $adlsName
 $storageAccountName = $adlsName # Data Lake Store account name
 $storageRootPath = "/clusters/hdiadlcluster" # E.g. /clusters/hdiadlcluster
 $clusterNodes = 2 # The number of nodes in the HDInsight cluster
-write-host "HDInsight admin"
+write-host "*** Type HDInsight admin ID and PW ***"
+write-host "*** For example, azureadmin ***"
 $httpCredentials = Get-Credential
-write-host "HDInsight user"
+write-host "*** Type HDInsight user id and PW ***"
+write-host "*** For example, azureuser ***"
 $sshCredentials = Get-Credential
 $tenantID = (Get-AzureRmContext).Tenant.TenantId
 
