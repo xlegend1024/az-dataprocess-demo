@@ -2,7 +2,7 @@
 # This script will create demo environment
 # for Adanvaced Data Analtyics
 cd $HOME
-$params = Get-Content $HOME\clouddrive\psParam2.dat | Out-String | ConvertFrom-StringData
+$params = Get-Content $HOME\clouddrive\psParam.dat | Out-String | ConvertFrom-StringData
 $rgName=$params.rgName
 $blobName=$params.blobName
 $adlsName=$params.adlsName
