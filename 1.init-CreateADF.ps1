@@ -37,6 +37,13 @@ Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /system -AceTy
 Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /catalog -AceType User -Id $app.ApplicationId -Permissions All 
 Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /data -AceType User -Id $app.ApplicationId -Permissions All
 Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /data/output -AceType User -Id $app.ApplicationId -Permissions All
+
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path / -AceType Group -Id $app.ApplicationId -Permissions 777
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /system -AceType Other -Id $app.ApplicationId -Permissions All 
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /catalog -AceType Other -Id $app.ApplicationId -Permissions All 
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /data -AceType User -Id $app.ApplicationId -Permissions All
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /data/output -AceType User -Id $app.ApplicationId -Permissions All
+
 #Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /clusters -AceType User -Id $app.ApplicationId -Permissions All
 #Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /clusters/hdiadlcluster -AceType User -Id $app.ApplicationId -Permissions All
 
@@ -44,6 +51,8 @@ Set-AzureRmDataLakeStoreItemPermission -Account $adlsName -Path $myrootdir/data 
 Set-AzureRmDataLakeStoreItemPermission -Account $adlsName -Path $myrootdir/data/output -Permission 777
 Set-AzureRmDataLakeStoreItemPermission -Account $adlsName -Path $myrootdir/clusters -Permission 777
 Set-AzureRmDataLakeStoreItemPermission -Account $adlsName -Path $myrootdir/clusters/hdiadlcluste -Permission 777
+
+
 
 $adf=New-AzureRmDataFactory -ResourceGroupName $rgName -Name $adfName –Location "West US" 
 New-AzureRmDataFactoryLinkedService $adf -File $HOME\CloudDrive\1.ADF\ADFJson\Source-WWIDW.json
@@ -62,10 +71,17 @@ New-AzureRmDataFactoryDataset $adf -File $HOME\CloudDrive\1.ADF\ADFJson\output-f
 New-AzureRmDataFactoryPipeline $adf -File $HOME\CloudDrive\1.ADF\ADFJson\CopyData_WWIDWtoADL.json
 
 #HDI with ADLS
-$servicePrincipalHDI = Get-AzureRmADServicePrincipal -SearchString $spNameHDI
+$certificatePFX = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($certificateFilePath, $spPWDHDI)
+$rawCertificateData = $certificatePFX.GetRawCertData()
+$credential = [System.Convert]::ToBase64String($rawCertificateData)
+$HDIApp = New-AzureRmADApplication -DisplayName $spNameHDI -HomePage "https://contoso.com" -IdentifierUris "https://"$spNameHDI".azurehdinsight.net"  -CertValue $credential  -StartDate $certificatePFX.NotBefore -EndDate $certificatePFX.NotAfter
+$HDIAppId = $HDIApp.ApplicationId
+$servicePrincipalHDI = New-AzureRmADServicePrincipal -ApplicationId $HDIAppId
+#$servicePrincipalHDI = Get-AzureRmADServicePrincipal -SearchString $spNameHDI
 Set-AzureRmDataLakeStoreItemAclEntry -AccountName $storageAccountName -Path / -AceType User -Id $servicePrincipalHDI.Id -Permissions All
 Set-AzureRmDataLakeStoreItemAclEntry -AccountName $storageAccountName -Path /clusters -AceType User -Id $servicePrincipalHDI.Id -Permissions All
 Set-AzureRmDataLakeStoreItemAclEntry -AccountName $storageAccountName -Path /clusters/hdiadlcluster -AceType User -Id $servicePrincipalHDI.Id -Permissions All
 
 # Set these variables
+# https://docs.microsoft.com/en-us/azure/data-lake-store/data-lake-store-hdinsight-hadoop-use-powershell
 New-AzureRmHDInsightCluster -ClusterType Spark -OSType Linux -ClusterSizeInNodes $clusterNodes -ResourceGroupName $rgName -ClusterName $clusterName -HttpCredential $httpCredentials -Location $loc -DefaultStorageAccountType AzureDataLakeStore -DefaultStorageAccountName "$storageAccountName.azuredatalakestore.net" -DefaultStorageRootPath $storageRootPath -Version "3.6" -SshCredential $sshCredentials -AadTenantId $tenantId -ObjectId $servicePrincipalHDI.Id -CertificateFilePath $certificateFilePath -CertificatePassword $spPWDHDI
