@@ -3,13 +3,13 @@ CREATE MASTER KEY;
 CREATE DATABASE SCOPED CREDENTIAL sqldwDemoCred
 WITH
     IDENTITY = 'user',
-    SECRET = '6cDGGy1SIHOdGNm8gtwB0/NB5/QR5gl61bFfsEbJc7N1b6/y2raWGguT9J/cQgfvAxAsnUYkMckEFy7J/ibUcQ=='
+    SECRET = 'vdPOQh8sO51AECa8Miaq8gHlfex1v850vEeXXOchXwfnwVt4/Vl1/UbODS7FAcJjMrw4PjtIuCcFMCEmLTOaNQ=='
 ;
 
 CREATE EXTERNAL DATA SOURCE sqldwDemoBlob
 WITH (
     TYPE = HADOOP,
-    LOCATION = 'wasbs://datawarehouse@gatesdwblob.blob.core.windows.net',
+    LOCATION = 'wasbs://datawarehouse@demo4109.blob.core.windows.net',
     CREDENTIAL = sqldwDemoCred
 );
 
@@ -114,6 +114,7 @@ WITH (
     DATA_SOURCE=sqldwDemoBlob,
     FILE_FORMAT=TextFile
 );
+
 SELECT TOP 10 * FROM dbo.FactSaleExternal;
 
 SELECT TOP 10 * FROM dbo.DimCustomerExternal; 

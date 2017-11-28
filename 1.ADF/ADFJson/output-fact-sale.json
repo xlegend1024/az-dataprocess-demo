@@ -92,7 +92,7 @@
         "linkedServiceName": "Destination-WWIDataLake",
         "typeProperties": {
             "fileName": "[Fact].[Sale].txt",
-            "folderPath": "\\data\\WWIdw",
+            "folderPath": "data/WWIdw",
             "format": {
                 "type": "TextFormat",
                 "columnDelimiter": "|",

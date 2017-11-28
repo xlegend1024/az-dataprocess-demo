@@ -13,7 +13,6 @@ $loc="eastus2"
 $spName="Dataprocess_delete_ME"
 $spPWDHDI="1q2w3e4r5t^Y"
 $certificateFilePath="$HOME\clouddrive\3.HDI\cert-download.pfx"
-$storageAccountName = $adlsName # Data Lake Store account name
 $storageRootPath = "/clusters/hdiadlcluster" # E.g. /clusters/hdiadlcluster
 $clusterNodes = 2 # The number of nodes in the HDInsight cluster
 write-host "*** Type HDInsight admin ID and PW ***"
@@ -25,17 +24,24 @@ $sshCredentials = Get-Credential
 $tenantID = (Get-AzureRmContext).Tenant.TenantId
 
 $app = Get-AzureRmADServicePrincipal -SearchString $spName
-$myrootdir = "/"
-New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path $myrootdir/data
-New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path $myrootdir/data/output
-New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path $myrootdir/clusters
+New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path /data/
+New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path /data/WWIdw
+New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path /data/output
+New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path /clusters
 
-Set-AzureRmDataLakeStoreItemOwner -Account $adlsName -Path $myrootdir/data -Type User -Id $app.Id
-Set-AzureRmDataLakeStoreItemOwner -Account $adlsName -Path $myrootdir/data/output -Type User -Id $app.Id
-Set-AzureRmDataLakeStoreItemPermission -Account $adlsName -Path $myrootdir/data -Permission 777
-Set-AzureRmDataLakeStoreItemPermission -Account $adlsName -Path $myrootdir/data/output -Permission 777
-Set-AzureRmDataLakeStoreItemAclEntry -Account $adlsName -Path $myrootdir/data -AceType User -Id $app.Id -Permissions All
-Set-AzureRmDataLakeStoreItemAclEntry -Account $adlsName -Path $myrootdir/data/output -AceType User -Id $app.Id -Permissions All
+Set-AzureRmDataLakeStoreItemOwner -Account $adlsName -Path / -Type User -Id $app.Id
+Set-AzureRmDataLakeStoreItemOwner -Account $adlsName -Path /system -Type User -Id $app.Id
+Set-AzureRmDataLakeStoreItemOwner -Account $adlsName -Path /data/WWIdw -Type User -Id $app.Id
+Set-AzureRmDataLakeStoreItemOwner -Account $adlsName -Path /data/output -Type User -Id $app.Id
+Set-AzureRmDataLakeStoreItemPermission -Account $adlsName -Path / -Permission 0777
+Set-AzureRmDataLakeStoreItemPermission -Account $adlsName -Path /system -Permission 0777
+Set-AzureRmDataLakeStoreItemPermission -Account $adlsName -Path /data/WWIdw -Permission 0777
+Set-AzureRmDataLakeStoreItemPermission -Account $adlsName -Path /data/output -Permission 0777 
+Set-AzureRmDataLakeStoreItemAclEntry -Account $adlsName -Path / -AceType User -Id $app.Id -Permissions All -Default
+Set-AzureRmDataLakeStoreItemAclEntry -Account $adlsName -Path /system -AceType User -Id $app.Id -Permissions All -Default
+Set-AzureRmDataLakeStoreItemAclEntry -Account $adlsName -Path /data -AceType User -Id $app.Id -Permissions All -Default
+Set-AzureRmDataLakeStoreItemAclEntry -Account $adlsName -Path /data/WWIdw -AceType User -Id $app.Id -Permissions All -Default
+Set-AzureRmDataLakeStoreItemAclEntry -Account $adlsName -Path /data/output -AceType User -Id $app.Id -Permissions All -Default
 
 $adf=New-AzureRmDataFactory -ResourceGroupName $rgName -Name $adfName –Location "West US" 
 New-AzureRmDataFactoryLinkedService $adf -File $HOME\CloudDrive\1.ADF\ADFJson\Source-WWIDW.json
@@ -58,9 +64,9 @@ $credential = [System.Convert]::ToBase64String($rawCertificateData)
 $HDIApp = New-AzureRmADApplication -DisplayName "HDIADL" -HomePage "https://contoso.com" -IdentifierUris "https://mycontoso.com" -CertValue $credential -StartDate $certificatePFX.NotBefore -EndDate $certificatePFX.NotAfter
 $HDIAppId = $HDIApp.ApplicationId
 $servicePrincipalHDI = New-AzureRmADServicePrincipal -ApplicationId $HDIAppId
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $storageAccountName -Path / -AceType User -Id $servicePrincipalHDI.Id -Permissions All
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $storageAccountName -Path /clusters -AceType User -Id $servicePrincipalHDI.Id -Permissions All
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $storageAccountName -Path /clusters/hdiadlcluster -AceType User -Id $servicePrincipalHDI.Id -Permissions All
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path / -AceType User -Id $servicePrincipalHDI.Id -Permissions All
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /clusters -AceType User -Id $servicePrincipalHDI.Id -Permissions All
+Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /clusters/hdiadlcluster -AceType User -Id $servicePrincipalHDI.Id -Permissions All
 
 # Set these variables
 # https://docs.microsoft.com/en-us/azure/data-lake-store/data-lake-store-hdinsight-hadoop-use-powershell

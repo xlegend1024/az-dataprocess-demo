@@ -1,0 +1,56 @@
+@transDetail = 
+    EXTRACT 
+        [Description]			string,
+        [Package]				string,
+        [Quantity]			int,
+        [UnitPrice]			decimal,	
+        [TaxRate]				decimal,
+        [TotalExcludingTax]	decimal,
+        [TaxAmount]			decimal,
+        [Profit]				decimal,
+        [TotalIncludingTax]	decimal,
+        [TotalDryItems]		int,
+        [TotalChillerItems]	int,
+        [LineageKey]			int,
+        [Customer]			string,
+        [BillToCustomer]		string,
+        [Category]			string,
+        [BuyingGroup]			string,
+        [PrimaryContact]		string,
+        [PostalCode]			string,
+        [Date]				DateTime,
+        [Day]					int,
+        [CalendarMonthLabel]	string,
+        [CalendarYear]		int
+    FROM "/data/output/transactionDetail.txt"
+    USING Extractors.Csv();
+
+@transDetail_new =
+    SELECT
+        t.[Description],
+        t.[Package],
+        t.[Quantity]			,
+        t.[UnitPrice]			,	
+        t.[TaxRate]				,
+        t.[TotalExcludingTax]	,
+        t.[TaxAmount]			,
+        t.[Profit]				,
+        t.[TotalIncludingTax]	,
+        t.[TotalDryItems]		,
+        t.[TotalChillerItems]	,
+        t.[LineageKey]			,
+        t.[Customer]			,
+        t.[BillToCustomer]		,
+        t.[Category]			,
+        t.[BuyingGroup]			,
+        t.[PrimaryContact]		,
+        t.[PostalCode]			,
+        t.[Date]				,
+        t.[Day]					,
+        t.[CalendarMonthLabel]	,
+        t.[CalendarYear]		
+    FROM @transDetail AS t;
+
+OUTPUT @transDetail_new
+    TO "/data/output/transactionDetail.tsv"
+USING Outputters.Tsv();	

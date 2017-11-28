@@ -1,5 +1,4 @@
-    
-@factsale =
+    @factsale =
     EXTRACT [SaleKey] int,
     [CityKey] int,
     [CustomerKey] int,

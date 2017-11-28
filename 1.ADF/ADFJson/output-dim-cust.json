@@ -52,7 +52,7 @@
         "linkedServiceName": "Destination-WWIDataLake",
         "typeProperties": {
             "fileName": "[Dimension].[Customer].txt",
-            "folderPath": "\\data\\WWIdw",
+            "folderPath": "data/WWIdw",
             "format": {
                 "type": "TextFormat",
                 "columnDelimiter": "|",
