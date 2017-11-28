@@ -1,25 +1,6 @@
 --drop external table [dbo].[TransactionDetail_ext]
 --drop external file format textfileformat
 
--- A: Create a Database Master Key.
-CREATE MASTER KEY;
-
--- B: Create a database scoped credential
-CREATE DATABASE SCOPED CREDENTIAL ADLCredential
-WITH
-    IDENTITY = '69a63af8-29cd-4e20-a0d8-9a14c34e35a0@https://login.microsoftonline.com/72ab6a71-29b5-4309-b4e7-66a2f7d88b14/oauth2/token',
-    SECRET = '1q2w3e4r5t6y7u8i9o0p-[='
-;
-
--- C: Create an external data source
-CREATE EXTERNAL DATA SOURCE AzureDataLakeStore
-WITH (
-    TYPE = HADOOP,
-    LOCATION = 'adl://adls113.azuredatalakestore.net',
-    CREDENTIAL = ADLCredential
-);
-
--- D: Create an external file format
 CREATE EXTERNAL FILE FORMAT TextFileFormat
 WITH
 (   FORMAT_TYPE = DELIMITEDTEXT
@@ -31,7 +12,6 @@ WITH
 );
 
 -- "Superhero action jacket (Blue) XXL","Each",3,30.00,15.000,90.00,13.50,24.00,103.50,3,0,11,"Tailspin Toys (Tomnolen, MS)","Tailspin Toys (Head Office)","Novelty Shop","Tailspin Toys","Sung-Hwan Hwang","90400",2013-01-01T00:00:00.0000000,1,"CY2013-Jan",2013
--- TransactionDetail
 CREATE EXTERNAL TABLE [dbo].[TransactionDetail_ext] (
     Description nvarchar(500) NULL,
     Package nvarchar(500) NULL,
@@ -66,4 +46,4 @@ WITH
 )
 ;
 
-SELECT TOP(1) * FROM [dbo].[TransactionDetail_ext]
+SELECT TOP(10) * FROM [dbo].[TransactionDetail_ext]

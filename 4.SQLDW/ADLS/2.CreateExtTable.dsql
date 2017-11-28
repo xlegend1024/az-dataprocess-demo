@@ -1,0 +1,49 @@
+--drop external table [dbo].[TransactionDetail_ext]
+--drop external file format textfileformat
+
+CREATE EXTERNAL FILE FORMAT TextFileFormat
+WITH
+(   FORMAT_TYPE = DELIMITEDTEXT
+,    FORMAT_OPTIONS (FIELD_TERMINATOR = ','
+                    , STRING_DELIMITER = ''
+                    , USE_TYPE_DEFAULT = FALSE
+                    , Encoding = 'UTF8' 
+                    )
+);
+
+-- "Superhero action jacket (Blue) XXL","Each",3,30.00,15.000,90.00,13.50,24.00,103.50,3,0,11,"Tailspin Toys (Tomnolen, MS)","Tailspin Toys (Head Office)","Novelty Shop","Tailspin Toys","Sung-Hwan Hwang","90400",2013-01-01T00:00:00.0000000,1,"CY2013-Jan",2013
+CREATE EXTERNAL TABLE [dbo].[TransactionDetail_ext] (
+    Description nvarchar(500) NULL,
+    Package nvarchar(500) NULL,
+    Quantity int null,
+    UnitPrice DECIMAL(18,2) NULL,
+    TaxRate DECIMAL(18,3) NULL,
+    TotalExcludingTax DECIMAL(18,2) NULL,	
+    TaxAmount DECIMAL(18,2) NULL,
+    Profit DECIMAL(18,2) NULL,
+    TotalIncludingTax DECIMAL(18,2) NULL,
+    TotalDryItems INT NULL,	
+    TotalChillerItems INT NULL,	
+    LineageKey INT NULL,
+	Customer NVARCHAR(100)  NULL,
+    BillToCustomer NVARCHAR(100)  NULL,
+    Category NVARCHAR(50)  NULL,
+	BuyingGroup NVARCHAR(50)  NULL,
+	PrimaryContact 	NVARCHAR(50)  NULL,
+	PostalCode NVARCHAR(10)  NULL,
+	[Date] NVARCHAR(30)  NULL,
+    Day NVARCHAR(10) NULL,
+    CalendarMonthLabel NVARCHAR(20)  NULL,
+    CalendarYear INT NULL
+)
+WITH
+(
+    LOCATION='/data/output/transactionDetail.txt'
+,   DATA_SOURCE = AzureDataLakeStore
+,   FILE_FORMAT = TextFileFormat
+,   REJECT_TYPE = VALUE
+,   REJECT_VALUE = 0
+)
+;
+
+SELECT TOP(10) * FROM [dbo].[TransactionDetail_ext]

@@ -1,0 +1,118 @@
+USE DATABASE wwimdb;
+
+CREATE DATA SOURCE IF NOT EXISTS ext_sqldb
+FROM AZURESQLDB
+WITH
+(
+    PROVIDER_STRING = "Database=wwimdb;Trusted_Connection=False;Encrypt=True",
+    CREDENTIAL = sqldbCred,
+    REMOTABLE_TYPES = (bool, byte, sbyte, short, ushort, int, uint, long, ulong, decimal, float, double, string, DateTime)
+); 
+
+#Sample1
+USE DATABASE wwimdb;
+
+@results =
+    SELECT *
+    FROM EXTERNAL ext_sqldb EXECUTE 
+        @"SELECT @@SERVERNAME AS serverName, GETDATE() AS dayTime, DB_NAME() AS databaseName";
+
+OUTPUT @results
+TO "/Output/sqldbversion.csv"
+USING Outputters.Csv(outputHeader: true);
+
+# Sample 2
+USE DATABASE wwimdb;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS factsale ( 
+        [Sale Key] long, 
+        [City Key] int, 
+        [Customer Key] int, 
+        [Bill To Customer Key] int, 
+        [Stock Item Key] int, 
+        [Invoice Date Key] DateTime, 
+        [Delivery Date Key] DateTime?,
+        [Salesperson Key] int, 
+        [WWI Invoice ID] int, 
+        [Description] string, 
+        [Package] string, 
+        [Quantity] int, 
+        [Unit Price] decimal, 
+        [Tax Rate] decimal, 
+        [Total Excluding Tax] decimal, 
+        [Tax Amount] decimal, 
+        [Profit] decimal, 
+        [Total Including Tax] decimal, 
+        [Total Dry Items] int, 
+        [Total Chiller Items] int, 
+        [Lineage Key] int
+)  FROM ext_sqldb LOCATION "Fact.Sale";
+
+
+@dimdate = 
+    EXTRACT [Date]	DateTime,
+	[DayNumber]	int,
+    [Day]	int,
+    [Month]	string,
+    [ShortMonth]	string,
+    [CalendarMonthNumber]	int,
+    [CalendarMonthLabel]	string,
+    [CalendarYear]	int,
+    [CalendarYearLabel]	string,
+    [FiscalMonthNumber]	int,
+    [FiscalMonthLabel]	string,
+    [FiscalYear]	string,
+    [FiscalYear Label]	string,
+    [ISOWeekNumber]	int
+    FROM "/data/WWIdw/%5BDimension%5D.%5BDate%5D.txt"
+    USING Extractors.Text(delimiter: '|', quoting: true);
+
+
+
+@dimcustomer = 
+    EXTRACT [CustomerKey]	int,
+    [WWICustomerID]	int,
+    [Customer]	string,
+    [BillToCustomer]	string,
+    [Category]	string,
+    [BuyingGroup]	string,
+    [PrimaryContact]	string,
+    [PostalCode]	string,
+    [ValidFrom]	DateTime,
+    [ValidTo]	DateTime,
+    [LineageKey]	int
+    FROM "/data/WWIdw/%5BDimension%5D.%5BCustomer%5D.txt"
+    USING Extractors.Text(delimiter: '|', quoting: true, nullEscape:"\\N");
+
+
+@transDetail = 
+    SELECT  
+       s.[Description]
+      ,s.[Package]
+      ,s.[Quantity]
+      ,s.[Unit Price]
+      ,s.[Tax Rate]
+      ,s.[Total Excluding Tax]
+      ,s.[Tax Amount]
+      ,s.[Profit]
+      ,s.[Total Including Tax]
+      ,s.[Total Dry Items]
+      ,s.[Total Chiller Items]
+      ,s.[Lineage Key]
+      ,c.[Customer]
+      ,c.[BillToCustomer]
+      ,c.[Category]
+      ,c.[BuyingGroup]
+      ,c.[PrimaryContact]
+      ,c.[PostalCode]
+	  ,d.[Date]
+      ,d.[Day]
+      ,d.[CalendarMonthLabel]
+      ,d.[CalendarYear]
+  FROM factsale AS s
+  JOIN @dimcustomer AS c ON s.[Customer Key] == c.[CustomerKey]
+  JOIN @dimdate AS d ON s.[Invoice Date Key] == d.[Date];
+
+OUTPUT @transDetail 
+    TO "/data/output/JoinSQLDB_TranDetail.csv"
+USING Outputters.Csv(outputHeader: true);

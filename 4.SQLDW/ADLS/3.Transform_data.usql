@@ -25,10 +25,10 @@
     FROM "/data/output/transactionDetail.txt"
     USING Extractors.Csv();
 
-@transDetail_new =
+@transDetail_tsv =
     SELECT
-        t.[Description],
-        t.[Package],
+        t.[Description]         ,
+        t.[Package]             ,
         t.[Quantity]			,
         t.[UnitPrice]			,	
         t.[TaxRate]				,
@@ -51,6 +51,6 @@
         t.[CalendarYear]		
     FROM @transDetail AS t;
 
-OUTPUT @transDetail_new
+OUTPUT @transDetail_tsv
     TO "/data/output/transactionDetail.tsv"
-USING Outputters.Tsv();	
+USING Outputters.Tsv(outputHeader: true);	

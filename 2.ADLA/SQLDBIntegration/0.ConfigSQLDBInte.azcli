@@ -1,0 +1,9 @@
+adla=adla12437
+sqlsvradd=tcp:wwimsvr19530.database.windows.net,1433
+sqldbName=wwimdb
+credName=sqldbCred
+
+az dla job submit --account $adla --job-name "create db" --script "CREATE DATABASE "$sqldbName";"
+## Not working currently
+##az dla catalog credential delete --account $adla --credential-name $credName --database-name $sqldbName
+#az dla catalog credential create --account $adla --credential-name $credName --database-name $sqldbName --uri $sqlsvradd --user-name sqladmin --password 1q2w3e4r5t6Y
