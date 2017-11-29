@@ -1,0 +1,10 @@
+Source 
+https://hyssh0mtc0sea.blob.core.windows.net/newyorktaxi/trip_data
+https://hyssh0mtc0sea.blob.core.windows.net/newyorktaxi/trip_fare
+
+Dest
+swebhdfs://adls113.azuredatalakestore.net/newyorktaxi/trip_data
+swebhdfs://adls113.azuredatalakestore.net/newyorktaxi/trip_fare
+
+AdlCopy /Source https://hyssh0mtc0sea.blob.core.windows.net/newyorktaxi/trip_data/  /Dest swebhdfs://adls113.azuredatalakestore.net/newyorktaxi/trip_data/ /sourcekey 7LuS4Hu0SMmVqLvm5BlRmBmwrs3Q7+04nlW8WzFOO2KYIXY+0HlAO0kvW3m6is/F/dDlbWBC3Buv6kdaSHs76w== /Pattern *.csv
+AdlCopy /Source https://hyssh0mtc0sea.blob.core.windows.net/newyorktaxi/trip_fare/  /Dest swebhdfs://adls113.azuredatalakestore.net/newyorktaxi/trip_fare/ /sourcekey 7LuS4Hu0SMmVqLvm5BlRmBmwrs3Q7+04nlW8WzFOO2KYIXY+0HlAO0kvW3m6is/F/dDlbWBC3Buv6kdaSHs76w== /Pattern *.csv

@@ -90,5 +90,5 @@
 
 OUTPUT @transDetail 
     TO "/data/output/transactionDetail.txt"
-USING Outputters.Csv();
+USING Outputters.Csv(outputHeader: true);
 

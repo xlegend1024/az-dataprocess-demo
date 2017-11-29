@@ -22,6 +22,6 @@
     GROUP BY hack_license;
 
 OUTPUT @result 
-TO "/newyorktaxi/total_amount.csv"
+TO "/newyorktaxi/totalfare_amount.csv"
 USING Outputters.Csv();
 

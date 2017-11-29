@@ -3,18 +3,7 @@
 			,SUM(Profit) AS TotalProfit
 	FROM [DB_Transactions].[dbo].[TransactionDetail]
 	GROUP BY Customer
-	ORDER BY SUM(Profit) DESC
-	FETCH 10 ROWS;
-	
-OUTPUT @profitablecustomers
-TO "/Processed/WideWorldImporters/MostProfitableCustomers.csv"
-USING Outputters.Csv();	
-
-@profitablecustomers =
-	SELECT 	Customer
-			,SUM(Profit) AS TotalProfit
-	FROM [DB_Transactions].[dbo].[TransactionDetail]
-	GROUP BY Customer;
+	ORDER BY SUM(Profit) DESC;
 	
 OUTPUT @profitablecustomers
 TO "/Processed/WideWorldImporters/MostProfitableCustomers.csv"

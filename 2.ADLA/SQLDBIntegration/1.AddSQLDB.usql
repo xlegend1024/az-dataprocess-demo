@@ -1,3 +1,5 @@
+#--https://msdn.microsoft.com/en-us/library/azure/mt621299.aspx
+
 USE DATABASE wwimdb;
 
 CREATE DATA SOURCE IF NOT EXISTS ext_sqldb
