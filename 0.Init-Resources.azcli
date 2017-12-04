@@ -69,7 +69,7 @@ az dla account create --account $adlaName --default-data-lake-store $adlsName --
 
 # Create Conatiner for ASLA script
 az storage container create --name $containerName2 --connection-string $blobConn
-file_to_upload="./1.ADF/ADFUSQLScript/ProcessData.usql"
+file_to_upload="$HOME/az-dataprocess-demo/1.ADF/ADFUSQLScript/ProcessData.usql"
 objName="ProcessData.usql"
 # Upload a script
 az storage blob upload --container-name $containerName2 --file $file_to_upload --name $objName --connection-string $blobConn
@@ -87,7 +87,7 @@ azStorageLinkedSvr='{
     }
 }
 '
-echo $azStorageLinkedSvr > ./1.ADF/ADFJson/USQLScript.json
+echo $azStorageLinkedSvr > $HOME/az-dataprocess-demo/1.ADF/ADFJson/USQLScript.json
 # on Cloud Shell .\CloudDrive\
 echo $azStorageLinkedSvr > $HOME/clouddrive/1.ADF/ADFJson/USQLScript.json
 
@@ -108,7 +108,7 @@ adlslinkedsvr='
 }
 '
 
-echo $adlslinkedsvr > ./1.ADF/ADFJson/Destination-WWIDataLake.json
+echo $adlslinkedsvr > $HOME/az-dataprocess-demo/1.ADF/ADFJson/Destination-WWIDataLake.json
 # on Cloud Shell .\CloudDrive\
 echo $adlslinkedsvr > $HOME/clouddrive/1.ADF/ADFJson/Destination-WWIDataLake.json
 
@@ -127,7 +127,7 @@ azADLAlink='
         }
     }
 }'
-echo $azADLAlink > ./1.ADF/ADFJson/AzureDataLakeAnalyticsLinkedService.json
+echo $azADLAlink > $HOME/az-dataprocess-demo/1.ADF/ADFJson/AzureDataLakeAnalyticsLinkedService.json
 # on Cloud Shell .\CloudDrive\
 echo $azADLAlink > $HOME/clouddrive/1.ADF/ADFJson/AzureDataLakeAnalyticsLinkedService.json
 
@@ -143,7 +143,7 @@ srcwwidw='
     }
 }
 '
-echo $srcwwidw > ./1.ADF/ADFJson/Source-WWIDW.json
+echo $srcwwidw > $HOME/az-dataprocess-demo/1.ADF/ADFJson/Source-WWIDW.json
 # on Cloud Shell .\CloudDrive\
 echo $srcwwidw > $HOME/clouddrive/1.ADF/ADFJson/Source-WWIDW.json
 
@@ -312,7 +312,7 @@ pipeline='
     }
 }
 '
-echo "$pipeline" > ./1.ADF/ADFJson/CopyData_WWIDWtoADL.json
+echo "$pipeline" > $HOME/az-dataprocess-demo/1.ADF/ADFJson/CopyData_WWIDWtoADL.json
 # on Cloud Shell .\CloudDrive\
 echo "$pipeline" > $HOME/clouddrive/1.ADF/ADFJson/CopyData_WWIDWtoADL.json
 
