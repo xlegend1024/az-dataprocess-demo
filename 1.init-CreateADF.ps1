@@ -59,7 +59,7 @@ New-AzureRmDataFactoryPipeline $adf -File $HOME\CloudDrive\1.ADF\ADFJson\CopyDat
 
 #Remove 
 $tmp=Get-AzureRmADServicePrincipal -SearchString "HDIADL"
-Remove-AzureRmADApplication -ObjectId (Get-AzureRmADApplication -ApplicationId $tmp.ApplicationId) -Force
+Remove-AzureRmADApplication -ObjectId (Get-AzureRmADApplication -ApplicationId $tmp.ApplicationId).ObjectId -Force
 
 #HDI with ADLS
 $certificatePFX = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($certificateFilePath, $spPWDHDI)
