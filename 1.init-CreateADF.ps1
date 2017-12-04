@@ -70,7 +70,6 @@ $HDIAppId = $HDIApp.ApplicationId
 $servicePrincipalHDI = New-AzureRmADServicePrincipal -ApplicationId $HDIAppId
 Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path / -AceType User -Id $servicePrincipalHDI.Id -Permissions All
 Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /clusters -AceType User -Id $servicePrincipalHDI.Id -Permissions All
-Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path /clusters/hdiadlcluster -AceType User -Id $servicePrincipalHDI.Id -Permissions All
 
 # Set these variables
 # https://docs.microsoft.com/en-us/azure/data-lake-store/data-lake-store-hdinsight-hadoop-use-powershell
