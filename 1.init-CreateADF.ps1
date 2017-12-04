@@ -57,6 +57,10 @@ New-AzureRmDataFactoryDataset $adf -File $HOME\CloudDrive\1.ADF\ADFJson\output-d
 New-AzureRmDataFactoryDataset $adf -File $HOME\CloudDrive\1.ADF\ADFJson\output-fact-sale.json
 New-AzureRmDataFactoryPipeline $adf -File $HOME\CloudDrive\1.ADF\ADFJson\CopyData_WWIDWtoADL.json
 
+#Remove 
+$tmp=Get-AzureRmADServicePrincipal -SearchString "HDIADL"
+Remove-AzureRmADApplication -ObjectId (Get-AzureRmADApplication -ApplicationId $tmp.ApplicationId) -Force
+
 #HDI with ADLS
 $certificatePFX = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($certificateFilePath, $spPWDHDI)
 $rawCertificateData = $certificatePFX.GetRawCertData()
