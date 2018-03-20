@@ -9,7 +9,7 @@ containerName=sampledata
 sqlsvrName=wwimsvr$RANDOM #Save it as ps1
 sqldbName=wwimdb
 sqladm=sqladmin
-sqlpwd=1q2w3e4r5t6Y
+sqlpwd=safePassword!
 adlsName=adls$RANDOM #Save it as ps1
 adlaName=adla$RANDOM #Save it as ps1
 clusterName=hdi$RANDOM # Save it as ps1
@@ -60,7 +60,7 @@ az sql db import -s $sqlsvrName -n $sqldbName -g $rgName -p $sqlpwd -u $sqladm -
 az ad sp delete --id 'http://'$spName
 az ad sp delete --id 'https://contoso.com'
 # create sp for
-read sp_id sp_password <<< $(az ad sp create-for-rbac -n $spName --role owner --scopes /subscriptions/$subId/resourceGroups/$rgName --password "1q2w3e4r5t6y7u8i9o0p-[=" --query [appId,password] -o tsv)
+read sp_id sp_password <<< $(az ad sp create-for-rbac -n $spName --role owner --scopes /subscriptions/$subId/resourceGroups/$rgName --password "safePassword!-[=" --query [appId,password] -o tsv)
 
 # Create ADLS
 az dls account create --account $adlsName --resource-group $rgName --encryption-type ServiceManaged --tier Consumption --tags $myTags
