@@ -9,7 +9,9 @@ containerName=sampledata
 sqlsvrName=wwimsvr$RANDOM #Save it as ps1
 sqldbName=wwimdb
 sqladm=sqladmin
-sqlpwd=safePassword!
+echo -n Password: 
+read -s sqlpwd
+echo $sqlpwd
 adlsName=adls$RANDOM #Save it as ps1
 adlaName=adla$RANDOM #Save it as ps1
 clusterName=hdi$RANDOM # Save it as ps1
@@ -19,6 +21,7 @@ containerName2=scripts
 myTags="Env=demo"
 
 # Create ADF directories
+mkdir $HOME/clouddrive/
 mkdir $HOME/clouddrive/1.ADF/
 mkdir $HOME/clouddrive/1.ADF/ADFJson
 mkdir $HOME/clouddrive/3.HDI/
@@ -48,22 +51,27 @@ az storage blob upload --container-name $containerName --file $file_to_upload --
 # Create a SQL Server
 az sql server create --admin-user $sqladm --admin-password $sqlpwd --location $loc --name $sqlsvrName --resource-group $rgName #--tags $myTags
 # Update SQL Server Firewall rule
-az sql server firewall-rule create -n openall --start-ip-address 1.1.1.1 --end-ip-addres 255.1.1.1 -g $rgName -s $sqlsvrName
+az sql server firewall-rule create -n openall --start-ip-address 1.1.1.1 --end-ip-addres 255.255.255.255 -g $rgName -s $sqlsvrName
 # Create a SQL DB
 az sql db create --name $sqldbName --resource-group $rgName --server $sqlsvrName --service-objective S3  #--tags $myTags
 # Restore a SQL DB
 bloburi="https://$blobName.blob.core.windows.net/$containerName/$objName"
-time=2018-01-01T00:00:00Z
+time=2020-01-01T00:00:00Z
 sas=$(az storage blob generate-sas --account-name $blobName --container-name $containerName --name $objName --permissions r --expiry $time --output tsv)
 az sql db import -s $sqlsvrName -n $sqldbName -g $rgName -p $sqlpwd -u $sqladm --storage-key $sas --storage-key-type SharedAccessKey --storage-uri $bloburi
 # if sp is exsit remove the sp
 az ad sp delete --id 'http://'$spName
 az ad sp delete --id 'https://contoso.com'
 # create sp for
-read sp_id sp_password <<< $(az ad sp create-for-rbac -n $spName --role owner --scopes /subscriptions/$subId/resourceGroups/$rgName --password "safePassword!-[=" --query [appId,password] -o tsv)
+read sp_id sp_password <<< $(az ad sp create-for-rbac -n $spName --role contributor --scopes /subscriptions/$subId/resourceGroups/$rgName --password $sqlpwd --query [appId,password] -o tsv)
 
 # Create ADLS
 az dls account create --account $adlsName --resource-group $rgName --encryption-type ServiceManaged --tier Consumption --tags $myTags
+az dls fs create --account $adlsName --path /data --folder
+az dls fs create --account $adlsName --path /data/WWIdw --folder
+az dls fs create --account $adlsName --path /data/output --folder
+az dls fs create --account $adlsName --path /clusters --folder
+
 # Create ADLA
 az dla account create --account $adlaName --default-data-lake-store $adlsName --resource-group $rgName --tags $myTags
 
@@ -138,7 +146,7 @@ srcwwidw='
         "hubName": "'$adfName'_hub",
         "type": "AzureSqlDatabase",
         "typeProperties": {
-            "connectionString": "Data Source='$sqlsvrName'.database.windows.net;Initial Catalog=wwimdb;Integrated Security=False;User ID=sqladmin;Password=1q2w3e4r5t6Y;Connect Timeout=30;Encrypt=True"
+            "connectionString": "Data Source='$sqlsvrName'.database.windows.net;Initial Catalog=wwimdb;Integrated Security=False;User ID=sqladmin;Password="'$sqlpwd'";Connect Timeout=30;Encrypt=True"
         }
     }
 }
