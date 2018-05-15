@@ -10,6 +10,7 @@ sqlsvrName=wwimsvr$RANDOM #Save it as ps1
 sqldbName=wwimdb
 sqladm=sqladmin
 echo $sqlpwd
+sleep 1
 adlsName=adls$RANDOM #Save it as ps1
 adlaName=adla$RANDOM #Save it as ps1
 clusterName=hdi$RANDOM # Save it as ps1
