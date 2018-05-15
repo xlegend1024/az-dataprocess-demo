@@ -9,8 +9,6 @@ containerName=sampledata
 sqlsvrName=wwimsvr$RANDOM #Save it as ps1
 sqldbName=wwimdb
 sqladm=sqladmin
-echo -n Password: 
-read -s sqlpwd
 echo $sqlpwd
 adlsName=adls$RANDOM #Save it as ps1
 adlaName=adla$RANDOM #Save it as ps1
