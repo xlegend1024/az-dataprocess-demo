@@ -24,12 +24,13 @@ write-host "*** For example, azureuser ***"
 $sshCredentials = Get-Credential
 $tenantID = (Get-AzureRmContext).Tenant.TenantId
 
+<# Not running on cloud shell
 $app = Get-AzureRmADServicePrincipal -SearchString $spName
 New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path /data/
 New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path /data/WWIdw
 New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path /data/output
 New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path /clusters
-<#
+
 Set-AzureRmDataLakeStoreItemOwner -Account $adlsName -Path / -Type User -Id $app.Id
 Set-AzureRmDataLakeStoreItemOwner -Account $adlsName -Path /system -Type User -Id $app.Id
 Set-AzureRmDataLakeStoreItemOwner -Account $adlsName -Path /data/WWIdw -Type User -Id $app.Id
@@ -44,6 +45,8 @@ Set-AzureRmDataLakeStoreItemAclEntry -Account $adlsName -Path /data -AceType Use
 Set-AzureRmDataLakeStoreItemAclEntry -Account $adlsName -Path /data/WWIdw -AceType User -Id $app.Id -Permissions All -Default
 Set-AzureRmDataLakeStoreItemAclEntry -Account $adlsName -Path /data/output -AceType User -Id $app.Id -Permissions All -Default
 #>
+
+# Create Azure Data Factory V1
 $adf=New-AzureRmDataFactory -ResourceGroupName $rgName -Name $adfName –Location "West US" 
 New-AzureRmDataFactoryLinkedService $adf -File $HOME\CloudDrive\1.ADF\ADFJson\Source-WWIDW.json
 New-AzureRmDataFactoryLinkedService $adf -File $HOME\CloudDrive\1.ADF\ADFJson\USQLScript.json
