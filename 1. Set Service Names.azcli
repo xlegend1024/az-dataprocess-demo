@@ -1,0 +1,31 @@
+# This is 2nd script
+# if you have not run '0. Set Sub and pwd.azcli' please do now before you run this
+
+# get 
+subId=$(az account show --output tsv --query [id])
+sleep 1
+tenantId=$(az account show --output tsv --query [tenantId])
+sleep 1
+rgName=data-$RANDOM-rg #Save it as ps1
+loc=eastus2
+blobName=demo$RANDOM #Save it as ps1
+containerName=sampledata
+sqlsvrName=wwimsvr$RANDOM #Save it as ps1
+sqldbName=wwimdb
+sqladm=sqladmin
+adlsName=adls$RANDOM #Save it as ps1
+adlaName=adla$RANDOM #Save it as ps1
+clusterName=hdi$RANDOM # Save it as ps1
+adfName=adf$RANDOM #Save it as ps1
+spName=Dataprocess_delete_ME
+containerName2=scripts
+myTags="Env=demo"
+
+# Create ADF directories
+mkdir $HOME/clouddrive/
+mkdir $HOME/clouddrive/1.ADF/
+mkdir $HOME/clouddrive/1.ADF/ADFJson
+mkdir $HOME/clouddrive/3.HDI/
+
+# Copy JSON files
+cp ./1.ADF/ADFJson/* $HOME/clouddrive/1.ADF/ADFJson/

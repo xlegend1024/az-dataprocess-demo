@@ -1,0 +1,11 @@
+# Select Azure subscription before you run rest of script
+# Change subscrition name based on your environment
+
+# This sample requires owner role of resource group or subscription
+# Contributor role won't be able to create ADF pipeline activities later 
+
+# 1. Select Azure subscription
+az account set --subscription "<ReplaceToYourSubscription>"
+
+# 2. Set a parameter that will be used for password 
+sqlpwd='<ReplaceToYourSafePassword>'
