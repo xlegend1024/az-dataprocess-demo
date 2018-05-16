@@ -1,6 +1,7 @@
 # Data Process Demo 
 # This script will create demo environment
 # for Adanvaced Data Analtyics
+Select-AzureRMSubscription -SubscriptionName 'Field: hyssh'
 cd $HOME
 $params = Get-Content $HOME\clouddrive\psParam.dat | Out-String | ConvertFrom-StringData
 $rgName=$params.rgName
@@ -11,7 +12,7 @@ $clusterName=$params.clusterName
 $adfName=$params.adfName 
 $loc="eastus2"
 $spName="Dataprocess_delete_ME"
-$spPWDHDI="1q2w3e4r5t6y7u*I"
+$spPWDHDI="1q2w3e4r5t^Y"
 $certificateFilePath="$HOME\clouddrive\3.HDI\cert-download.pfx"
 $storageRootPath = "/clusters/hdiadlcluster" # E.g. /clusters/hdiadlcluster
 $clusterNodes = 2 # The number of nodes in the HDInsight cluster
@@ -28,7 +29,7 @@ New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path /data/
 New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path /data/WWIdw
 New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path /data/output
 New-AzureRmDataLakeStoreItem -Folder -AccountName $adlsName -Path /clusters
-
+<#
 Set-AzureRmDataLakeStoreItemOwner -Account $adlsName -Path / -Type User -Id $app.Id
 Set-AzureRmDataLakeStoreItemOwner -Account $adlsName -Path /system -Type User -Id $app.Id
 Set-AzureRmDataLakeStoreItemOwner -Account $adlsName -Path /data/WWIdw -Type User -Id $app.Id
@@ -42,7 +43,7 @@ Set-AzureRmDataLakeStoreItemAclEntry -Account $adlsName -Path /system -AceType U
 Set-AzureRmDataLakeStoreItemAclEntry -Account $adlsName -Path /data -AceType User -Id $app.Id -Permissions All -Default
 Set-AzureRmDataLakeStoreItemAclEntry -Account $adlsName -Path /data/WWIdw -AceType User -Id $app.Id -Permissions All -Default
 Set-AzureRmDataLakeStoreItemAclEntry -Account $adlsName -Path /data/output -AceType User -Id $app.Id -Permissions All -Default
-
+#>
 $adf=New-AzureRmDataFactory -ResourceGroupName $rgName -Name $adfName –Location "West US" 
 New-AzureRmDataFactoryLinkedService $adf -File $HOME\CloudDrive\1.ADF\ADFJson\Source-WWIDW.json
 New-AzureRmDataFactoryLinkedService $adf -File $HOME\CloudDrive\1.ADF\ADFJson\USQLScript.json
@@ -65,7 +66,7 @@ Remove-AzureRmADApplication -ObjectId (Get-AzureRmADApplication -ApplicationId $
 $certificatePFX = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($certificateFilePath, $spPWDHDI)
 $rawCertificateData = $certificatePFX.GetRawCertData()
 $credential = [System.Convert]::ToBase64String($rawCertificateData)
-$HDIApp = New-AzureRmADApplication -DisplayName "HDIADL" -HomePage "https://contoso.com" -IdentifierUris "https://mycontoso.com" -CertValue $credential -StartDate $certificatePFX.NotBefore -EndDate $certificatePFX.NotAfter
+$HDIApp = New-AzureRmADApplication -DisplayName "HDIADL" -HomePage "https://c0nt0s0.com" -IdentifierUris "https://myc0nt0s0.com" -CertValue $credential -StartDate $certificatePFX.NotBefore -EndDate $certificatePFX.NotAfter
 $HDIAppId = $HDIApp.ApplicationId
 $servicePrincipalHDI = New-AzureRmADServicePrincipal -ApplicationId $HDIAppId
 Set-AzureRmDataLakeStoreItemAclEntry -AccountName $adlsName -Path / -AceType User -Id $servicePrincipalHDI.Id -Permissions All

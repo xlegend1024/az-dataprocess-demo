@@ -1,7 +1,9 @@
-subId=$(az account list --query [].[id] --output tsv)
-sleep 3
-tenantId=$(az account list --query [].[tenantId] --output tsv)
-sleep 3
+az account set --subscription "<ReplaceToYourSubscription>"
+sqlpwd='<ReplaceToYourSafePassword>'
+subId=$(az account show --output tsv --query [id])
+sleep 1
+tenantId=$(az account show --output tsv --query [tenantId])
+sleep 1
 rgName=data-$RANDOM-rg #Save it as ps1
 loc=eastus2
 blobName=demo$RANDOM #Save it as ps1
@@ -9,8 +11,11 @@ containerName=sampledata
 sqlsvrName=wwimsvr$RANDOM #Save it as ps1
 sqldbName=wwimdb
 sqladm=sqladmin
+az account show --output tsv --query [name]
 echo $sqlpwd
-sleep 1
+echo $subId
+echo $tenantId
+sleep 10
 adlsName=adls$RANDOM #Save it as ps1
 adlaName=adla$RANDOM #Save it as ps1
 clusterName=hdi$RANDOM # Save it as ps1
@@ -52,7 +57,7 @@ az sql server create --admin-user $sqladm --admin-password $sqlpwd --location $l
 # Update SQL Server Firewall rule
 az sql server firewall-rule create -n openall --start-ip-address 1.1.1.1 --end-ip-addres 255.255.255.255 -g $rgName -s $sqlsvrName
 # Create a SQL DB
-az sql db create --name $sqldbName --resource-group $rgName --server $sqlsvrName --service-objective S3  #--tags $myTags
+az sql db create --name $sqldbName --resource-group $rgName --server $sqlsvrName --service-objective P2  #--tags $myTags
 # Restore a SQL DB
 bloburi="https://$blobName.blob.core.windows.net/$containerName/$objName"
 time=2020-01-01T00:00:00Z
@@ -60,16 +65,29 @@ sas=$(az storage blob generate-sas --account-name $blobName --container-name $co
 az sql db import -s $sqlsvrName -n $sqldbName -g $rgName -p $sqlpwd -u $sqladm --storage-key $sas --storage-key-type SharedAccessKey --storage-uri $bloburi
 # if sp is exsit remove the sp
 az ad sp delete --id 'http://'$spName
-az ad sp delete --id 'https://contoso.com'
-# create sp for
+az ad sp delete --id 'https://c0nt0s0.com'
+# create sp for 
+# cli should be run by resource group owner or subscuription owner
 read sp_id sp_password <<< $(az ad sp create-for-rbac -n $spName --role contributor --scopes /subscriptions/$subId/resourceGroups/$rgName --password $sqlpwd --query [appId,password] -o tsv)
 
 # Create ADLS
 az dls account create --account $adlsName --resource-group $rgName --encryption-type ServiceManaged --tier Consumption --tags $myTags
-az dls fs create --account $adlsName --path /data --folder
-az dls fs create --account $adlsName --path /data/WWIdw --folder
-az dls fs create --account $adlsName --path /data/output --folder
-az dls fs create --account $adlsName --path /clusters --folder
+# ** Following cli won't run on Cloud shell env. **
+#az dls fs create --account $adlsName --path /data --folder
+#az dls fs create --account $adlsName --path /data/WWIdw --folder
+#az dls fs create --account $adlsName --path /data/output --folder
+#az dls fs create --account $adlsName --path /clusters --folder
+# ** Following cli won't run on Cloud shell env. **
+#az dls fs access set-entry --account $adlsName --path / --acl-spec user:5a830197-162f-4be7-93cf-915ce6b94eb6:rwx
+#az dls fs access set-entry --account $adlsName --path /system --acl-spec user:5a830197-162f-4be7-93cf-915ce6b94eb6:rwx
+#az dls fs access set-entry --account $adlsName --path /data --acl-spec user:5a830197-162f-4be7-93cf-915ce6b94eb6:rwx
+#az dls fs access set-entry --account $adlsName --path /data/WWIdw --acl-spec user:5a830197-162f-4be7-93cf-915ce6b94eb6:rwx
+#az dls fs access set-entry --account $adlsName --path /data/output --acl-spec user:5a830197-162f-4be7-93cf-915ce6b94eb6:rwx
+#az dls fs access set-permission --account $adlsName --path / --permission 777
+#az dls fs access set-permission --account $adlsName --path /system --permission 777
+#az dls fs access set-permission --account $adlsName --path /data/ --permission 777
+#az dls fs access set-permission --account $adlsName --path /data/WWIdw --permission 777
+#az dls fs access set-permission --account $adlsName --path /data/output --permission 777
 
 # Create ADLA
 az dla account create --account $adlaName --default-data-lake-store $adlsName --resource-group $rgName --tags $myTags
@@ -145,7 +163,7 @@ srcwwidw='
         "hubName": "'$adfName'_hub",
         "type": "AzureSqlDatabase",
         "typeProperties": {
-            "connectionString": "Data Source='$sqlsvrName'.database.windows.net;Initial Catalog=wwimdb;Integrated Security=False;User ID=sqladmin;Password="'$sqlpwd'";Connect Timeout=30;Encrypt=True"
+            "connectionString": "Data Source='$sqlsvrName'.database.windows.net;Initial Catalog=wwimdb;Integrated Security=False;User ID=sqladmin;Password='$sqlpwd';Connect Timeout=30;Encrypt=True"
         }
     }
 }
