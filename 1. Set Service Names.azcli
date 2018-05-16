@@ -1,9 +1,10 @@
 # This is 2nd script
 # if you have not run '0. Set Sub and pwd.azcli' please do now before you run this
 
-# get 
+# get subscruption ID
 subId=$(az account show --output tsv --query [id])
 sleep 1
+# get tenant ID 
 tenantId=$(az account show --output tsv --query [tenantId])
 sleep 1
 rgName=data-$RANDOM-rg #Save it as ps1
