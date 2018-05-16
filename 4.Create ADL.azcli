@@ -1,0 +1,34 @@
+# Make sure you're running in right subscription and resource group
+az account show --output tsv --query [name]
+echo $sqlpwd
+echo $subId
+echo $tenantId
+# Pause for 10 second, 
+# If parameter is missing please stop the script and setup parameter 
+sleep 10
+
+# Create ADLS
+az dls account create --account $adlsName --resource-group $rgName --encryption-type ServiceManaged --tier Consumption --tags $myTags
+
+# Create ADLA
+az dla account create --account $adlaName --default-data-lake-store $adlsName --resource-group $rgName --tags $myTags
+
+# ** Following cli won't run on Cloud shell env. **
+az dls fs create --account $adlsName --path /data --folder
+az dls fs create --account $adlsName --path /data/WWIdw --folder
+az dls fs create --account $adlsName --path /data/output --folder
+az dls fs create --account $adlsName --path /clusters --folder
+
+# ** Following cli won't run on Cloud shell env. **
+az dls fs access set-permission --account $adlsName --path / --permission 777
+az dls fs access set-permission --account $adlsName --path /system --permission 777
+az dls fs access set-permission --account $adlsName --path /data/ --permission 777
+az dls fs access set-permission --account $adlsName --path /data/WWIdw --permission 777
+az dls fs access set-permission --account $adlsName --path /data/output --permission 777
+
+################################################################## ** Don't need to run ** ##################################################################
+az dls fs access set-entry --account $adlsName --path / --acl-spec user:5a830197-162f-4be7-93cf-915ce6b94eb6:rwx
+az dls fs access set-entry --account $adlsName --path /system --acl-spec user:5a830197-162f-4be7-93cf-915ce6b94eb6:rwx
+az dls fs access set-entry --account $adlsName --path /data --acl-spec user:5a830197-162f-4be7-93cf-915ce6b94eb6:rwx
+az dls fs access set-entry --account $adlsName --path /data/WWIdw --acl-spec user:5a830197-162f-4be7-93cf-915ce6b94eb6:rwx
+az dls fs access set-entry --account $adlsName --path /data/output --acl-spec user:5a830197-162f-4be7-93cf-915ce6b94eb6:rwx

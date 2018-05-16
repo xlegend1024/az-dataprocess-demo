@@ -1,0 +1,33 @@
+# This is 3rd script
+# if you have not run '0. Set Sub and pwd.azcli' please do now before you run this
+# if you have not run '1. Set Service Names.azcli' please do now before you run this
+
+# Make sure you're running in right subscription and resource group
+az account show --output tsv --query [name]
+echo $sqlpwd
+echo $subId
+echo $tenantId
+# Pause for 10 second, 
+# If parameter is missing please stop the script and setup parameter 
+sleep 10
+
+# Create the Resource Group
+# if you have exsiting one you can skip this part
+az group create --name $rgName --location $loc --tags $myTags
+
+# Create the Storage Account
+az storage account create --name $blobName --resource-group $rgName --sku Standard_LRS --location $loc --tags $myTags
+# Get blob connection string 
+blobConn=$(az storage account show-connection-string --name $blobName --resource-group $rgName --output tsv)
+# Create a container
+az storage container create --name $containerName --connection-string $blobConn
+
+# Create Conatiner for ASLA script
+az storage container create --name $containerName2 --connection-string $blobConn
+file_to_upload="$HOME/az-dataprocess-demo/1.ADF/ADFUSQLScript/ProcessData.usql"
+objName="ProcessData.usql"
+
+# Upload a U-SQL script
+az storage blob upload --container-name $containerName2 --file $file_to_upload --name $objName --connection-string $blobConn
+# Confirm file is uploaded
+#az storage blob list --container-name $containerName2 --connection-string $blobConn --output table

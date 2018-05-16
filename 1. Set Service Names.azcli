@@ -7,26 +7,42 @@ sleep 1
 # get tenant ID 
 tenantId=$(az account show --output tsv --query [tenantId])
 sleep 1
+# set resource group name
+# if you have exsiting one please use the one
 rgName=data-$RANDOM-rg #Save it as ps1
+# set azure region
 loc=eastus2
-blobName=demo$RANDOM #Save it as ps1
+# set blob name that should be unique 
+blobName=demo$RANDOM # It will be saved it in parameter file
+# set container name that will be created in Blob
 containerName=sampledata
-sqlsvrName=wwimsvr$RANDOM #Save it as ps1
+# set SQL Server (Instance) name
+sqlsvrName=wwimsvr$RANDOM # It will be saved it in parameter file
+# DO NOT CHANGE
 sqldbName=wwimdb
+# DO NOT CHANGE
 sqladm=sqladmin
-adlsName=adls$RANDOM #Save it as ps1
-adlaName=adla$RANDOM #Save it as ps1
-clusterName=hdi$RANDOM # Save it as ps1
-adfName=adf$RANDOM #Save it as ps1
+# set ADLS name
+adlsName=adls$RANDOM # It will be saved it in parameter file
+# set ADLA name
+adlaName=adla$RANDOM # It will be saved it in parameter file
+# set HDInsight name
+clusterName=hdi$RANDOM # It will be saved it in parameter file
+# set ADF name
+adfName=adf$RANDOM # It will be saved it in parameter file
+# Service Principal Name you can change
 spName=Dataprocess_delete_ME
+# set container name for U-SQL script
 containerName2=scripts
+# Tag you can add or remove
 myTags="Env=demo"
 
-# Create ADF directories
+# Create ADF directories on your local machine or Cloud Shell
 mkdir $HOME/clouddrive/
 mkdir $HOME/clouddrive/1.ADF/
 mkdir $HOME/clouddrive/1.ADF/ADFJson
 mkdir $HOME/clouddrive/3.HDI/
 
 # Copy JSON files
+# If you see error here, please make sure you're runing cli in az-dataprocess-demo folder
 cp ./1.ADF/ADFJson/* $HOME/clouddrive/1.ADF/ADFJson/

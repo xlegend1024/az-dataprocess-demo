@@ -1,0 +1,291 @@
+# Make sure you're running in right subscription and resource group
+az account show --output tsv --query [name]
+echo $sqlpwd
+echo $subId
+echo $tenantId
+echo $spName
+# Pause for 10 second, 
+# If parameter is missing please stop the script and setup parameter 
+sleep 10
+
+# if sp is exsit remove the sp
+az ad sp delete --id 'http://'$spName
+az ad sp delete --id 'https://c0nt0s0.com'
+# create sp for ADF
+# Following cli should be run by __resource group owner__ or __subscuription owner__
+# This SP (Service Princial) will be used by ADF to get access to ADLS
+read sp_id sp_password <<< $(az ad sp create-for-rbac -n $spName --role contributor --scopes /subscriptions/$subId/resourceGroups/$rgName --password $sqlpwd --query [appId,password] -o tsv)
+
+# Define SQL DB connection
+srcwwidw='
+{
+    "name": "Source-WWIDW",
+    "properties": {
+        "hubName": "'$adfName'_hub",
+        "type": "AzureSqlDatabase",
+        "typeProperties": {
+            "connectionString": "Data Source='$sqlsvrName'.database.windows.net;Initial Catalog=wwimdb;Integrated Security=False;User ID=sqladmin;Password='$sqlpwd';Connect Timeout=30;Encrypt=True"
+        }
+    }
+}
+'
+# Save definition to file
+echo $srcwwidw > $HOME/az-dataprocess-demo/1.ADF/ADFJson/Source-WWIDW.json
+# on Cloud Shell .\CloudDrive\
+echo $srcwwidw > $HOME/clouddrive/1.ADF/ADFJson/Source-WWIDW.json
+
+# Define U-SQL Script location 
+azStorageLinkedSvr='{
+    "name": "USQLScript",
+    "properties": {
+        "description": "",
+        "hubName": "'$adfName'_hub",
+        "type": "AzureStorage",
+        "typeProperties": {
+            "connectionString": "'$blobConn'"
+        }
+    }
+}
+'
+# Save definition to file
+echo $azStorageLinkedSvr > $HOME/az-dataprocess-demo/1.ADF/ADFJson/USQLScript.json
+# on Cloud Shell .\CloudDrive\
+echo $azStorageLinkedSvr > $HOME/clouddrive/1.ADF/ADFJson/USQLScript.json
+
+# Define ADLS connection
+# Here you need SP ID and Key which was created by 'az ad sp create-for-rbac' command
+adlslinkedsvr='
+{
+    "name": "Destination-WWIDataLake",
+    "properties": {
+        "type": "AzureDataLakeStore",
+        "typeProperties": {
+            "dataLakeStoreUri": "https://'$adlsName'.azuredatalakestore.net/webhdfs/v1",
+            "servicePrincipalId": "'$sp_id'",
+            "servicePrincipalKey": "'$sp_password'",
+            "tenant": "'$tenantId'",
+            "subscriptionId": "'$subId'",
+            "resourceGroupName": "'$rgName'"
+        }
+    }
+}
+'
+# Save definition to file
+echo $adlslinkedsvr > $HOME/az-dataprocess-demo/1.ADF/ADFJson/Destination-WWIDataLake.json
+# on Cloud Shell .\CloudDrive\
+echo $adlslinkedsvr > $HOME/clouddrive/1.ADF/ADFJson/Destination-WWIDataLake.json
+
+# Define ADLA connection
+# Here you need SP ID and Key which was created by 'az ad sp create-for-rbac' command
+azADLAlink='
+{
+    "name": "AzureDataLakeAnalyticsLinkedService",
+    "properties": {
+        "type": "AzureDataLakeAnalytics",
+        "typeProperties": {
+            "accountName": "'$adlaName'",
+            "servicePrincipalId": "'$sp_id'",
+            "servicePrincipalKey": "'$sp_password'",
+            "tenant": "'$tenantId'",
+            "subscriptionId": "'$subId'",
+            "resourceGroupName": "'$rgName'"
+        }
+    }
+}'
+# Save definition to file
+echo $azADLAlink > $HOME/az-dataprocess-demo/1.ADF/ADFJson/AzureDataLakeAnalyticsLinkedService.json
+# on Cloud Shell .\CloudDrive\
+echo $azADLAlink > $HOME/clouddrive/1.ADF/ADFJson/AzureDataLakeAnalyticsLinkedService.json
+
+# Define ADF Pipeline
+pipeline='
+{
+    "name": "CopyData_WWIDWtoADL",
+    "properties": {
+        "activities": [
+            {
+                "type": "Copy",
+                "typeProperties": {
+                    "source": {
+                        "type": "SqlSource",
+                        "sqlReaderQuery": "select * from [Dimension].[Customer]"
+                    },
+                    "sink": {
+                        "type": "AzureDataLakeStoreSink",
+                        "writeBatchSize": 0,
+                        "writeBatchTimeout": "00:00:00"
+                    }
+                },
+                "inputs": [
+                    {
+                        "name": "InputDatasets-dim-customer"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "OutputDatasets-dim-customer"
+                    }
+                ],
+                "policy": {
+                    "timeout": "1.00:00:00",
+                    "concurrency": 1,
+                    "executionPriorityOrder": "NewestFirst",
+                    "style": "StartOfInterval",
+                    "retry": 3,
+                    "longRetry": 0,
+                    "longRetryInterval": "00:00:00"
+                },
+                "scheduler": {
+                    "frequency": "Day",
+                    "interval": 1
+                },
+                "name": "Export_SQLDB_to_ADLS_Dimension_Customer"
+            },
+            {
+                "type": "Copy",
+                "typeProperties": {
+                    "source": {
+                        "type": "SqlSource",
+                        "sqlReaderQuery": "select * from [Dimension].[Date]"
+                    },
+                    "sink": {
+                        "type": "AzureDataLakeStoreSink",
+                        "writeBatchSize": 0,
+                        "writeBatchTimeout": "00:00:00"
+                    }
+                },
+                "inputs": [
+                    {
+                        "name": "InputDatasets-dim-date"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "OutputDatasets-dim-date"
+                    }
+                ],
+                "policy": {
+                    "timeout": "1.00:00:00",
+                    "concurrency": 1,
+                    "executionPriorityOrder": "NewestFirst",
+                    "style": "StartOfInterval",
+                    "retry": 3,
+                    "longRetry": 0,
+                    "longRetryInterval": "00:00:00"
+                },
+                "scheduler": {
+                    "frequency": "Day",
+                    "interval": 1
+                },
+                "name": "Export_SQLDB_to_ADLS_Dimension_Date"
+            },
+            {
+                "type": "Copy",
+                "typeProperties": {
+                    "source": {
+                        "type": "SqlSource",
+                        "sqlReaderQuery": "select * from [Fact].[Sale]"
+                    },
+                    "sink": {
+                        "type": "AzureDataLakeStoreSink",
+                        "writeBatchSize": 0,
+                        "writeBatchTimeout": "00:00:00"
+                    }
+                },
+                "inputs": [
+                    {
+                        "name": "InputDatasets-fact-sale"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "OutputDatasets-fact-sale"
+                    }
+                ],
+                "policy": {
+                    "timeout": "1.00:00:00",
+                    "concurrency": 1,
+                    "executionPriorityOrder": "NewestFirst",
+                    "style": "StartOfInterval",
+                    "retry": 3,
+                    "longRetry": 0,
+                    "longRetryInterval": "00:00:00"
+                },
+                "scheduler": {
+                    "frequency": "Day",
+                    "interval": 1
+                },
+                "name": "Export_SQLDB_to_ADLS_Fact_Sale"
+            },
+            {
+                "type": "DataLakeAnalyticsU-SQL",
+                "typeProperties": {
+                    "scriptPath": "scripts\\ProcessData.usql",
+                    "scriptLinkedService": "USQLScript",
+                    "degreeOfParallelism": 5,
+                    "priority": 1000,
+                    "parameters": {}
+                },
+                "inputs": [
+                    {
+                        "name": "OutputDatasets-dim-customer"
+                    },
+                    {
+                        "name": "OutputDatasets-dim-date"
+                    },
+                    {
+                        "name": "OutputDatasets-fact-sale"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "ADLAOutput"
+                    }
+                ],
+                "policy": {
+                    "timeout": "01:00:00",
+                    "concurrency": 1,
+                    "retry": 3
+                },
+                "scheduler": {
+                    "frequency": "Day",
+                    "interval": 1
+                },
+                "name": "ProcessTransactions",
+                "linkedServiceName": "AzureDataLakeAnalyticsLinkedService"
+            }
+        ],
+        "start": "2017-11-17T00:01:00.00Z",
+        "end": "2099-12-31T00:01:00Z",
+        "isPaused": false,
+        "hubName": "'$adfName'_hub",
+        "pipelineMode": "Scheduled"
+    }
+}
+'
+# Save definition to file
+echo "$pipeline" > $HOME/az-dataprocess-demo/1.ADF/ADFJson/CopyData_WWIDWtoADL.json
+# on Cloud Shell .\CloudDrive\
+echo "$pipeline" > $HOME/clouddrive/1.ADF/ADFJson/CopyData_WWIDWtoADL.json
+
+cp ./3.HDI/cert-download.pfx $HOME/clouddrive/3.HDI/cert-download.pfx
+
+# Save parameta as a file in clouddrive so you can access file by other shell env. 
+printf 'blobName='$blobName'
+adlsName='$adlsName'
+adlaName='$adlaName'
+clusterName='$clusterName'
+adfName='$adfName'
+rgName='$rgName'
+sqlsvrName='$sqlsvrName'
+' > $HOME/clouddrive/psParam.dat
+
+# Save parameta as a file in clouddrive so you can access file by other shell env.
+printf 'export blobName='$blobName'
+export adlsName='$adlsName'
+export adlaName='$adlaName'
+export clusterName='$clusterName'
+export adfName='$adfName'
+export rgName='$rgName'
+export sqlsvrName='$sqlsvrName'
+' > $HOME/clouddrive/psParam.sh

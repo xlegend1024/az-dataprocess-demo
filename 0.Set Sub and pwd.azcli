@@ -4,6 +4,9 @@
 # This sample requires owner role of resource group or subscription
 # Contributor role won't be able to create ADF pipeline activities later 
 
+# Run script az-dataprocess-demo folder
+# az-dataprocess-demo>_
+
 # 1. Select Azure subscription
 az account set --subscription "<ReplaceToYourSubscription>"
 
