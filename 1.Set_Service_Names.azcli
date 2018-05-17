@@ -22,18 +22,24 @@ sqlsvrName=wwimsvr$RANDOM # It will be saved it in parameter file
 sqldbName=wwimdb
 # DO NOT CHANGE
 sqladm=sqladmin
+
 # set ADLS name
 adlsName=adls$RANDOM # It will be saved it in parameter file
+
 # set ADLA name
 adlaName=adla$RANDOM # It will be saved it in parameter file
+
 # set HDInsight name
 clusterName=hdi$RANDOM # It will be saved it in parameter file
 # set ADF name
 adfName=adf$RANDOM # It will be saved it in parameter file
+
 # Service Principal Name you can change
 spName=Dataprocess_delete_ME
+
 # set container name for U-SQL script
 containerName2=scripts
+
 # Tag you can add or remove
 myTags="Env=demo"
 

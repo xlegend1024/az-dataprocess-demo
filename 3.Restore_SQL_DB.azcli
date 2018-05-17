@@ -11,8 +11,7 @@ echo $tenantId
 # If parameter is missing please stop the script and setup parameter 
 sleep 10
 
-# Restore Database from backup
-# Upload backup file to blob
+# Create a DB and restore Database from backup
 # Download Sample DB (Backup)
 file_to_upload="./WideWorldImportersDW-Standard.bacpac"
 objName=WideWorldImportersDW-Standard.bacpac
@@ -28,10 +27,15 @@ az storage blob upload --container-name $containerName --file $file_to_upload --
 # Create SQL Server and restore database from backup 
 # Create a SQL Server
 az sql server create --admin-user $sqladm --admin-password $sqlpwd --location $loc --name $sqlsvrName --resource-group $rgName #--tags $myTags
+
 # Update SQL Server Firewall rule
+# Opeing all firewall is NOT recommend for production or in any environment
+# Opening all IP address is for this demo and lab only
 az sql server firewall-rule create -n openall --start-ip-address 1.1.1.1 --end-ip-addres 255.255.255.255 -g $rgName -s $sqlsvrName
+
 # Create a SQL DB
 az sql db create --name $sqldbName --resource-group $rgName --server $sqlsvrName --service-objective P2  #--tags $myTags
+
 # Get uri where sql backup is
 bloburi="https://$blobName.blob.core.windows.net/$containerName/$objName"
 time=2020-01-01T00:00:00Z

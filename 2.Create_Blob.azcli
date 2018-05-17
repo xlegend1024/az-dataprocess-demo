@@ -15,10 +15,13 @@ sleep 10
 # if you have exsiting one you can skip this part
 az group create --name $rgName --location $loc --tags $myTags
 
+# Storage Account
 # Create the Storage Account
 az storage account create --name $blobName --resource-group $rgName --sku Standard_LRS --location $loc --tags $myTags
+
 # Get blob connection string 
 blobConn=$(az storage account show-connection-string --name $blobName --resource-group $rgName --output tsv)
+
 # Create a container
 az storage container create --name $containerName --connection-string $blobConn
 

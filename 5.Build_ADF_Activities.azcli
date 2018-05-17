@@ -1,3 +1,9 @@
+# This is 4th script
+# if you have not run '0. Set Sub and pwd.azcli' please do now before you run this
+# if you have not run '1. Set Service Names.azcli' please do now before you run this
+# if you have not run '3. Restore SQL DB.azcli' please do now before you run this
+# if you have not run '4. Create ADL.azcli' please do now before you run this
+
 # Make sure you're running in right subscription and resource group
 az account show --output tsv --query [name]
 echo $sqlpwd

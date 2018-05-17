@@ -1,3 +1,7 @@
+# This is 4th script
+# if you have not run '0. Set Sub and pwd.azcli' please do now before you run this
+# if you have not run '1. Set Service Names.azcli' please do now before you run this
+
 # Make sure you're running in right subscription and resource group
 az account show --output tsv --query [name]
 echo $sqlpwd
@@ -27,8 +31,8 @@ az dls fs access set-permission --account $adlsName --path /data/WWIdw --permiss
 az dls fs access set-permission --account $adlsName --path /data/output --permission 777
 
 ################################################################## ** Don't need to run ** ##################################################################
-az dls fs access set-entry --account $adlsName --path / --acl-spec user:5a830197-162f-4be7-93cf-915ce6b94eb6:rwx
-az dls fs access set-entry --account $adlsName --path /system --acl-spec user:5a830197-162f-4be7-93cf-915ce6b94eb6:rwx
-az dls fs access set-entry --account $adlsName --path /data --acl-spec user:5a830197-162f-4be7-93cf-915ce6b94eb6:rwx
-az dls fs access set-entry --account $adlsName --path /data/WWIdw --acl-spec user:5a830197-162f-4be7-93cf-915ce6b94eb6:rwx
-az dls fs access set-entry --account $adlsName --path /data/output --acl-spec user:5a830197-162f-4be7-93cf-915ce6b94eb6:rwx
+az dls fs access set-entry --account $adlsName --path / --acl-spec user:<ReplaceWithYourSP_ID>:rwx
+az dls fs access set-entry --account $adlsName --path /system --acl-spec user:<ReplaceWithYourSP_ID>:rwx
+az dls fs access set-entry --account $adlsName --path /data --acl-spec user:<ReplaceWithYourSP_ID>:rwx
+az dls fs access set-entry --account $adlsName --path /data/WWIdw --acl-spec user:<ReplaceWithYourSP_ID>:rwx
+az dls fs access set-entry --account $adlsName --path /data/output --acl-spec user:<ReplaceWithYourSP_ID>:rwx
