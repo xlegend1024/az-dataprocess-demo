@@ -3,7 +3,7 @@
 Run following scripts to setup an demo environment on [Azure portal](https://portal.azure.com).
 To save time use [Cloud Shell](https://azure.microsoft.com/en-us/features/cloud-shell/) on the portal.
 
-0. [0.Set Sub and pwd.azcli]('https://raw.githubusercontent.com/xlegend1024/az-dataprocess-demo/master/0.Set_and_pwd.azcli')
+0. [0.Set Sub and pwd.azcli]('https://raw.githubusercontent.com/xlegend1024/az-dataprocess-demo/master/0.Set_Sub_and_pwd.azcli')
     - Define subscription name and password 
 
 1. [1.Set Service Names.azcli](https://raw.githubusercontent.com/xlegend1024/az-dataprocess-demo/master/1.Set_Service_Names.azcli)
