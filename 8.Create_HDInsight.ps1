@@ -1,5 +1,4 @@
 # You have to run this Poershell script after Azure Cli script 0. to 5.
-
 # Select Azure subscription should be same sa preivous cli
 Select-AzureRMSubscription -SubscriptionName '<ReplaceToYourSubscription>'
 
