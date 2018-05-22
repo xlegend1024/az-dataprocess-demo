@@ -29,10 +29,3 @@ az dls fs access set-permission --account $adlsName --path /system --permission 
 az dls fs access set-permission --account $adlsName --path /data/ --permission 777
 az dls fs access set-permission --account $adlsName --path /data/WWIdw --permission 777
 az dls fs access set-permission --account $adlsName --path /data/output --permission 777
-
-################################################################## ** Don't need to run ** ##################################################################
-az dls fs access set-entry --account $adlsName --path / --acl-spec user:<ReplaceWithYourSP_ID>:rwx
-az dls fs access set-entry --account $adlsName --path /system --acl-spec user:<ReplaceWithYourSP_ID>:rwx
-az dls fs access set-entry --account $adlsName --path /data --acl-spec user:<ReplaceWithYourSP_ID>:rwx
-az dls fs access set-entry --account $adlsName --path /data/WWIdw --acl-spec user:<ReplaceWithYourSP_ID>:rwx
-az dls fs access set-entry --account $adlsName --path /data/output --acl-spec user:<ReplaceWithYourSP_ID>:rwx
